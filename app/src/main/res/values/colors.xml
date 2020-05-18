@@ -4,5 +4,8 @@
     <color name="colorPrimary">#000</color>
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#168c20</color>
-    <color name="darkButtonBack">#222222</color>
+    <color name="darkButtonBack">#111</color>
+    <color name="statusGreen">#59FF00</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

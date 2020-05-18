@@ -8,4 +8,6 @@
     <string name="addressTxtView">"Address : "</string>
     <string name="statusTxtView">Exposure status :</string>
     <string name="passportNumTxtView">"Passport Num : "</string>
+    <string name="statusValueTxt">"GREEN"</string>
+    <string name="statusDescriptionBtnText">Status Colour Description</string>
 </resources>
