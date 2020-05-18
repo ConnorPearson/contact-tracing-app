@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">contactTracingApp</string>
+    <string name="app_name">HEALTH PASS</string>
+    <string name="covidUpdatesBtnText">Covid Updates</string>
+    <string name="reportSymptomsBtnTxt">Report Your Symptoms</string>
+    <string name="covidUpdatesBtnHint">Check the governments most recent updates on the pandemic.</string>
+    <string name="reportSymptomsBtnHint">Report any corona symptoms you have began to experience</string>
+    <string name="nameTxtView">"Name : "</string>
+    <string name="addressTxtView">"Address : "</string>
+    <string name="statusTxtView">Exposure status :</string>
+    <string name="passportNumTxtView">"Passport Num : "</string>
 </resources>
