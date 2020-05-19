@@ -4,10 +4,19 @@
     <string name="reportSymptomsBtnTxt">Report Your Symptoms</string>
     <string name="covidUpdatesBtnHint">Check the governments most recent updates on the pandemic.</string>
     <string name="reportSymptomsBtnHint">Report any corona symptoms you have began to experience</string>
-    <string name="nameTxtView">"Name : "</string>
-    <string name="addressTxtView">"Address : "</string>
+    <string name="nameTxtView">"Name : %1$s  %2$s"</string>
+    <string name="addressTxtView">"Address : %1$s"</string>
     <string name="statusTxtView">Exposure status :</string>
-    <string name="passportNumTxtView">"Passport Num : "</string>
+    <string name="passportNumTxtView">"Passport Num : %1$s"</string>
     <string name="statusValueTxt">"GREEN"</string>
     <string name="statusDescriptionBtnText">Status Colour Description</string>
+    <string name="setupInstructionText">"Thank you for using the Covid-19 contact tracing application. This app will allow you, your friends and family to stay safe during these difficult times through the use of private and secure tracking of the corona virus. \n\n To get started please enter your details below : "</string>
+    <string name="firstNameTxt">"First Name"</string>
+    <string name="surnameTxt">"Surname"</string>
+    <string name="addressTxt">Address</string>
+    <string name="passportIDTxt">Passport ID</string>
+    <string name="agreementCheckBtn">By checking this box you accept the local use of your bluetooth data for corona virus tracking purposes. (THIS IS A TEST AGREEMENT, THIS IS NOT AT ALL AN AUTHENTIC OR LEGAL AGREEMENT AT THIS POINT IN DEVELOPMENT)</string>
+    <string name="submitBtn">Submit</string>
+    <string name="QRCodeDescription">Scannable QR code for easy scanning of personal details and status.</string>
+    <string name="welcomeTxt">Welcome!</string>
 </resources>

@@ -61,11 +61,10 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="8dp"
-                android:text="@string/nameTxtView"
+                android:text="@string/passportNumTxtView"
                 android:textAlignment="textStart"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                tools:text="@string/passportNumTxtView" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/statusTxtView"
@@ -94,6 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_margin="55dp"
+                android:contentDescription="@string/QRCodeDescription"
                 app:srcCompat="@mipmap/ic_launcher" />
         </LinearLayout>
 
