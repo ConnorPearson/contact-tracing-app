@@ -1,7 +1,5 @@
 package com.example.contacttracingapp;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -11,6 +9,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +50,7 @@ public class setup extends AppCompatActivity {
          Context context = getApplicationContext();
 
          if (checkFieldsPopulated()) {
-             finish();
+             getSharedPreferences("isSetupComplete", MODE_PRIVATE).edit().putBoolean("isSetupComplete", false).apply();
 
              OutputStreamWriter writer;
 
@@ -57,9 +58,16 @@ public class setup extends AppCompatActivity {
                  writer = new OutputStreamWriter(context.openFileOutput("userData.json", Context.MODE_PRIVATE));
                  writer.write(jsonifyUserData().toString());
                  writer.close();
+
              } catch (Exception e) {
                  Log.e("User data write", e.toString());
              }
+
+             Intent resultIntent = new Intent();
+             resultIntent.putExtra("userdata",  jsonifyUserData().toString());
+             setResult(RESULT_OK, resultIntent);
+
+             finish();
          }
          else {
              CharSequence text = "Some fields appear to be empty, Please enter the missing info to submit.";
@@ -82,13 +90,5 @@ public class setup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-
-        // Get the Intent that started this activity and extract the string
-        Intent intent = getIntent();
-
-        // Capture the layout's TextView and set the string as its text
-        //TextView textView = findViewById(R.id.nameTxtView);
-        //textView.setText(message);
-
     }
 }
