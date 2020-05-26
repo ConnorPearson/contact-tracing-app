@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">HEALTH PASS</string>
+    <string name="app_name">Covid-19 Health Pass</string>
     <string name="covidUpdatesBtnText">Recent Covid Updates</string>
     <string name="reportSymptomsBtnTxt">Report Your Symptoms</string>
     <string name="covidUpdatesBtnHint">Check the governments most recent updates on the pandemic.</string>
     <string name="reportSymptomsBtnHint">Report any corona symptoms you have began to experience</string>
-    <string name="nameTxtView">"Name : %1$s  %2$s"</string>
+    <string name="nameTxtView">Name : %1$s  %2$s</string>
     <string name="addressTxtView">"Address : %1$s"</string>
     <string name="statusTxtView">Exposure status :</string>
     <string name="passportNumTxtView">"Passport Num : %1$s"</string>
@@ -25,11 +25,12 @@
     <string name="fatigueCheckBox">Fatigue</string>
     <string name="dryCoughCheckBox">Dry cough</string>
     <string name="lossOfAppetiteCheckBox">Loss of appetite</string>
-    <string name="bodyAchesTextBox">Body aches</string>
-    <string name="breathShortnessTextBox">Shortness of breath</string>
+    <string name="bodyAchesCheckBox">Body aches</string>
+    <string name="breathShortnessCheckBox">Shortness of breath</string>
     <string name="mucusPhlegmTextBox">Mucus or phlegm</string>
     <string name="soreThroatTextBox">Sore throat</string>
     <string name="soreThroatCheckBox">Sore throat</string>
     <string name="headeachesCheckBox">Headaches</string>
     <string name="additionalTextView">Any additional symptoms :</string>
+    <string name="chillsCheckBox">Chills / Shaking</string>
 </resources>

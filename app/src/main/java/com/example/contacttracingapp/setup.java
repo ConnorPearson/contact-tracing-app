@@ -23,10 +23,10 @@ public class setup extends AppCompatActivity {
 
      public void agreementBtnCheck(View view) {
          if (((CheckBox)view).isChecked()) {
-             findViewById(R.id.sumbitBtn).setEnabled(true);
+             findViewById(R.id.submitBtn).setEnabled(true);
          }
          else {
-             findViewById(R.id.sumbitBtn).setEnabled(false);
+             findViewById(R.id.submitBtn).setEnabled(false);
          }
      }
 

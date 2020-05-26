@@ -14,7 +14,6 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="8dp"
         android:background="@color/statusGreen"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/bottomButtonLayout"
@@ -40,8 +39,7 @@
                 android:text="@string/nameTxtView"
                 android:textAlignment="textStart"
                 android:textColor="@android:color/primary_text_dark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/addressTxtView"
@@ -53,8 +51,7 @@
                 android:text="@string/addressTxtView"
                 android:textAlignment="textStart"
                 android:textColor="@android:color/primary_text_dark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/passportNumTxtView"
@@ -66,8 +63,7 @@
                 android:text="@string/passportNumTxtView"
                 android:textAlignment="textStart"
                 android:textColor="@android:color/primary_text_dark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/statusTxtView"
@@ -79,8 +75,7 @@
                 android:text="@string/statusTxtView"
                 android:textAlignment="center"
                 android:textColor="@android:color/primary_text_dark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/statusValueTxt"
@@ -95,10 +90,10 @@
             <ImageView
                 android:id="@+id/QRCodeImg"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginLeft="55dp"
+                android:layout_height="240dp"
+                android:layout_marginLeft="40dp"
                 android:layout_marginTop="30dp"
-                android:layout_marginRight="55dp"
+                android:layout_marginRight="40dp"
                 android:contentDescription="@string/QRCodeDescription"
                 app:srcCompat="@mipmap/ic_launcher" />
         </LinearLayout>
@@ -109,9 +104,9 @@
         android:id="@+id/bottomButtonLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -121,46 +116,46 @@
 
         <Button
             android:id="@+id/covidUpdatesBtn"
-            style="@android:style/Widget.Material.Button"
+            style="@style/AppTheme.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginRight="4dp"
             android:layout_weight="1"
-            android:background="@color/darkButtonBack"
             android:onClick="openCovidWebPage"
             android:scrollbars="none"
             android:text="@string/covidUpdatesBtnText"
-            android:textColor="@android:color/background_light"
-            android:textSize="14sp" />
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:theme="@style/AppTheme.Button" />
 
         <Button
             android:id="@+id/reportSymptomsBtn"
-            style="@android:style/Widget.Material.Button"
+            style="@style/AppTheme.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:layout_weight="1"
-            android:background="@color/darkButtonBack"
             android:onClick="openReportSymptoms"
             android:scrollbars="none"
             android:text="@string/reportSymptomsBtnTxt"
-            android:textColor="@android:color/background_light"
-            android:textSize="14sp" />
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:theme="@style/AppTheme.Button" />
 
         <Button
             android:id="@+id/statusDescriptionBtn"
-            style="@android:style/Widget.Material.Button"
+            style="@style/AppTheme.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="2dp"
             android:layout_weight="1"
-            android:background="@color/darkButtonBack"
             android:scrollbars="none"
             android:text="@string/statusDescriptionBtnText"
-            android:textColor="@android:color/background_light"
-            android:textSize="14sp" />
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:theme="@style/AppTheme.Button" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
