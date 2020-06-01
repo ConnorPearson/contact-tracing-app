@@ -1,5 +1,6 @@
 package com.example.contacttracingapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -54,7 +55,7 @@ public class ReportSymptoms extends AppCompatActivity {
 
                     DataOutputStream os = new DataOutputStream(connection.getOutputStream());
 
-                    os.writeBytes(jsonifySymptoms().toString());
+                    os.writeBytes(createSymptomsJson().toString());
 
                     os.flush();
                     os.close();
@@ -76,6 +77,9 @@ public class ReportSymptoms extends AppCompatActivity {
         thread.join();
 
         if (connectionSuccess[0]){
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("newStatus",  "RED");
+            setResult(RESULT_OK, resultIntent);
             finish();
         }
         else {
@@ -87,7 +91,7 @@ public class ReportSymptoms extends AppCompatActivity {
         }
     }
 
-    private JSONObject jsonifySymptoms() {
+    private JSONObject createSymptomsJson() {
         JSONObject symptoms = new JSONObject();
 
         try {

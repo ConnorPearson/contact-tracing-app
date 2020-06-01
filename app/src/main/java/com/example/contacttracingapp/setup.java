@@ -30,7 +30,7 @@ public class setup extends AppCompatActivity {
          }
      }
 
-     private JSONObject jsonifyUserData() {
+     private JSONObject createUserDataJson() {
          JSONObject userData = new JSONObject();
 
          try {
@@ -56,7 +56,7 @@ public class setup extends AppCompatActivity {
 
              try {
                  writer = new OutputStreamWriter(context.openFileOutput("userData.json", Context.MODE_PRIVATE));
-                 writer.write(jsonifyUserData().toString());
+                 writer.write(createUserDataJson().toString());
                  writer.close();
 
              } catch (Exception e) {
@@ -64,8 +64,11 @@ public class setup extends AppCompatActivity {
              }
 
              Intent resultIntent = new Intent();
-             resultIntent.putExtra("userdata",  jsonifyUserData().toString());
+             resultIntent.putExtra("userdata",  createUserDataJson().toString());
              setResult(RESULT_OK, resultIntent);
+
+             Intent intent = new Intent(this, MainActivity.class);
+             startActivity(intent);
 
              finish();
          }

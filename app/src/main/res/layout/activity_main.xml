@@ -115,47 +115,56 @@
         app:layout_constraintTop_toBottomOf="@+id/statusColourContainer">
 
         <Button
+            style="@style/AppTheme"
             android:id="@+id/covidUpdatesBtn"
-            style="@style/AppTheme.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="4dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
+            android:background="@color/darkButtonBack"
             android:onClick="openCovidWebPage"
             android:scrollbars="none"
             android:text="@string/covidUpdatesBtnText"
             android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textSize="18sp"
-            android:theme="@style/AppTheme.Button" />
+            android:textStyle="normal"
+            android:theme="@android:style/Widget.Holo.Button.Borderless" />
 
         <Button
+            style="@style/AppTheme"
             android:id="@+id/reportSymptomsBtn"
-            style="@style/AppTheme.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
+            android:background="@color/darkButtonBack"
             android:onClick="openReportSymptoms"
             android:scrollbars="none"
             android:text="@string/reportSymptomsBtnTxt"
             android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textSize="18sp"
-            android:theme="@style/AppTheme.Button" />
+            android:textStyle="normal"
+            android:theme="@android:style/Widget.Holo.Button.Borderless" />
 
         <Button
+            style="@style/AppTheme"
             android:id="@+id/statusDescriptionBtn"
-            style="@style/AppTheme.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="2dp"
             android:layout_weight="1"
+            android:background="@color/darkButtonBack"
             android:scrollbars="none"
             android:text="@string/statusDescriptionBtnText"
             android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textSize="18sp"
-            android:theme="@style/AppTheme.Button" />
+            android:textStyle="normal"
+            android:theme="@android:style/Widget.Holo.Button.Borderless" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

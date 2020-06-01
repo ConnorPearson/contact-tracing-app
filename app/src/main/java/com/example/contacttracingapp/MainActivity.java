@@ -1,9 +1,12 @@
 package com.example.contacttracingapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +25,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         if (isSetupComplete) {
             Intent intent = new Intent(this, setup.class);
             startActivityForResult(intent, 1);
+            finish();
         }
     }
 
@@ -48,13 +53,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        try {
-            userData = new JSONObject(Objects.requireNonNull(data.getStringExtra("userdata")));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        if(!(data == null)) {       //check data is not null
+            switch (requestCode) {
+                case 1:
+                    try {
+                        userData = new JSONObject(Objects.requireNonNull(data.getStringExtra("userdata")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
-        setupPageAttributes();
+                    setupPageAttributes();
+
+                    break;
+
+                case 2:
+                    String status = Objects.requireNonNull(data.getStringExtra("newStatus"));
+                    changeStatus(status);
+                    if (status.equals("RED"))
+                        findViewById(R.id.reportSymptomsBtn).setEnabled(false);
+            }
+        }
     }
 
     public void openCovidWebPage(View view) {
@@ -85,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void openReportSymptoms(View view) {
         Intent intent = new Intent(this, ReportSymptoms.class);
-        startActivity(intent);
+        startActivityForResult(intent, 2);
     }
 
     public void setupPageAttributes() {
@@ -127,14 +145,54 @@ public class MainActivity extends AppCompatActivity {
             int offset = y * bitMatrixWidth;
 
             for (int x = 0; x < bitMatrixWidth; x++) {
-
                 pixels[offset + x] = bitMatrix.get(x, y) ?
                         ContextCompat.getColor(this, R.color.black):ContextCompat.getColor(this, R.color.white);
             }
         }
-        Bitmap bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444);
 
+        Bitmap bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444);
         bitmap.setPixels(pixels, 0, 144, 0, 0, bitMatrixWidth, bitMatrixHeight);
+
         return bitmap;
+    }
+
+    public void changeStatus(String color) {
+        OutputStreamWriter writer;
+
+        try {
+            userData.put("status", color.toUpperCase());
+
+            writer = new OutputStreamWriter(getApplicationContext().openFileOutput("userData.json", Context.MODE_PRIVATE));
+            writer.write(userData.toString());
+            writer.close();
+
+        } catch (Exception e) {
+            Log.e("User data write", e.toString());
+        }
+
+        applyStatus(color.toUpperCase());
+    }
+
+    private void applyStatus(String status){
+        int statusColor;
+
+        switch (status.toUpperCase()) {
+            case "GREEN":
+                statusColor = Color.parseColor("#59ff00");
+                break;
+
+            case "AMBER" :
+                statusColor = Color.parseColor("#fceb05");
+                break;
+
+            default:    //Default to red as precaution if an error occurs
+                statusColor = Color.parseColor("#fc0505");
+                status = "RED";
+                break;
+        }
+
+        ((TextView)findViewById(R.id.statusValueTxt)).setText(status);
+        ((TextView)findViewById(R.id.statusValueTxt)).setTextColor(statusColor);
+        findViewById(R.id.statusColourContainer).setBackgroundColor(statusColor);
     }
 }

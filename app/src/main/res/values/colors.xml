@@ -6,6 +6,8 @@
     <color name="colorAccent">#168c20</color>
     <color name="darkButtonBack">#111</color>
     <color name="statusGreen">#59FF00</color>
+    <color name="statusAmber">#db8e1a</color>
+    <color name="statusRed">#f40b07</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 </resources>
