@@ -29,7 +29,7 @@ import java.io.OutputStreamWriter;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    public static JSONObject userData = new JSONObject();
+    private static JSONObject userData = new JSONObject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void openStatusDescription(View view) {
+        Intent intent = new Intent(this, StatusDescription.class);
+        startActivity(intent);
+    }
+
     public void openCovidWebPage(View view) {
         Uri govUrl = Uri.parse("https://www.gov.uk/coronavirus");
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, govUrl);
@@ -106,13 +111,13 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, 2);
     }
 
-    public void setupPageAttributes() {
+    private void setupPageAttributes() {
         ImageView QRCodeImg  = findViewById(R.id.QRCodeImg);
 
         try {
-                ((TextView) findViewById(R.id.nameTxtView)).setText(getString(R.string.nameTxtView, userData.get("firstname"), userData.get("surname")));
+                ((TextView) findViewById(R.id.nameTxtView)).setText(getString(R.string.nameTxtView, userData.get("firstName"), userData.get("surname")));
                 ((TextView) findViewById(R.id.addressTxtView)).setText(getString(R.string.addressTxtView, userData.get("address")));
-                ((TextView) findViewById(R.id.passportNumTxtView)).setText(getString(R.string.passportNumTxtView, userData.get("passportid")));
+                ((TextView) findViewById(R.id.passportNumTxtView)).setText(getString(R.string.passportNumTxtView, userData.get("passportID")));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -125,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    Bitmap TextToImageEncode(String Value) throws WriterException {
+    private Bitmap TextToImageEncode(String Value) throws WriterException {
         BitMatrix bitMatrix;
         try {
             bitMatrix = new MultiFormatWriter().encode(
@@ -156,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         return bitmap;
     }
 
-    public void changeStatus(String color) {
+    private void changeStatus(String color) {
         OutputStreamWriter writer;
 
         try {

@@ -2,8 +2,6 @@
     <string name="app_name">Covid-19 Health Pass</string>
     <string name="covidUpdatesBtnText">Recent Covid Updates</string>
     <string name="reportSymptomsBtnTxt">Report Your Symptoms</string>
-    <string name="covidUpdatesBtnHint">Check the governments most recent updates on the pandemic.</string>
-    <string name="reportSymptomsBtnHint">Report any corona symptoms you have began to experience</string>
     <string name="nameTxtView">Name : %1$s  %2$s</string>
     <string name="addressTxtView">"Address : %1$s"</string>
     <string name="statusTxtView">Exposure status :</string>
@@ -17,7 +15,7 @@
     <string name="passportIDTxt">Passport ID</string>
     <string name="agreementCheckBtn">By checking this box you accept the local use of your bluetooth data for corona virus tracking purposes. (THIS IS A TEST AGREEMENT, THIS IS NOT AT ALL AN AUTHENTIC OR LEGAL AGREEMENT AT THIS POINT IN DEVELOPMENT)</string>
     <string name="submitBtn">Submit</string>
-    <string name="QRCodeDescription">Scannable QR code for easy scanning of personal details and status.</string>
+    <string name="QRCodeDescription">QR code for easy scanning of personal details and status.</string>
     <string name="welcomeTxt">Welcome!</string>
     <string name="reportSymptomsTitleTxt">Report symptoms</string>
     <string name="reportInstructionsText">Please tick any of the symptoms that you are experiencing below, if you are experiencing a symptom that is not listed then please enter it in the \'Additional symptoms\' field.</string>
@@ -28,9 +26,15 @@
     <string name="bodyAchesCheckBox">Body aches</string>
     <string name="breathShortnessCheckBox">Shortness of breath</string>
     <string name="mucusPhlegmTextBox">Mucus or phlegm</string>
-    <string name="soreThroatTextBox">Sore throat</string>
     <string name="soreThroatCheckBox">Sore throat</string>
-    <string name="headeachesCheckBox">Headaches</string>
+    <string name="headachesCheckBox">Headaches</string>
     <string name="additionalTextView">Any additional symptoms :</string>
     <string name="chillsCheckBox">Chills / Shaking</string>
+    <string name="txtStatusGreenDesc" >You are currently not likely to have corona virus. You are safe to go outside as long as you follow social distancing and any additional rules provided by the government.</string>
+    <string name="txtStatusAmberDesc" >You potentially have corona virus. You were exposed to someone within contraction radius that is showing symptoms. Stay indoors for two weeks unless you show no symptoms after the first week.</string>
+    <string name="txtStatusRedDesc" >You are likely to have contracted the corona virus from exposure to someone showing symptoms. Please stay indoors for two weeks. Call 111 if you have any health concerns.</string>
+    <string name="txtStatusGreen">GREEN</string>
+    <string name="txtStatusAmber">AMBER</string>
+    <string name="txtStatusRed">RED</string>
+    <string name="descriptionsTitleTxt">Status Descriptions</string>
 </resources>

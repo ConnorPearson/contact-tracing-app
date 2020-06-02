@@ -17,7 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ReportSymptoms extends AppCompatActivity {
-    int checkedElements = 0;
+    private int checkedElements = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,13 +98,13 @@ public class ReportSymptoms extends AppCompatActivity {
             symptoms.put("fever", ((CheckBox)findViewById(R.id.feverCheckBox)).isChecked());
             symptoms.put("fatigue", ((CheckBox)findViewById(R.id.fatigueCheckBox)).isChecked());
             symptoms.put("cough",((CheckBox) findViewById(R.id.dryCoughCheckBox)).isChecked());
-            symptoms.put("lossofappetite", ((CheckBox)findViewById(R.id.lossOfAppetiteCheckBox)).isChecked());
-            symptoms.put("bodyache", ((CheckBox)findViewById(R.id.bodyAchesCheckBox)).isChecked());
-            symptoms.put("breathshortness", ((CheckBox)findViewById(R.id.breathShortnessCheckBox)).isChecked());
-            symptoms.put("mucusorphlegm", ((CheckBox) findViewById(R.id.mucusPhlegmCheckBox)).isChecked());
-            symptoms.put("sorethroat", ((CheckBox)findViewById(R.id.soreThroatCheckBox)).isChecked());
+            symptoms.put("lossOfAppetite", ((CheckBox)findViewById(R.id.lossOfAppetiteCheckBox)).isChecked());
+            symptoms.put("bodyAche", ((CheckBox)findViewById(R.id.bodyAchesCheckBox)).isChecked());
+            symptoms.put("breathShortness", ((CheckBox)findViewById(R.id.breathShortnessCheckBox)).isChecked());
+            symptoms.put("mucusOrPhlegm", ((CheckBox) findViewById(R.id.mucusPhlegmCheckBox)).isChecked());
+            symptoms.put("soreThroat", ((CheckBox)findViewById(R.id.soreThroatCheckBox)).isChecked());
             symptoms.put("headaches",((CheckBox) findViewById(R.id.headachesCheckBox)).isChecked());
-            symptoms.put("chillsandshaking",((CheckBox) findViewById(R.id.chillsCheckBox)).isChecked());
+            symptoms.put("chillsAndShaking",((CheckBox) findViewById(R.id.chillsCheckBox)).isChecked());
             symptoms.put("additional",((TextView) findViewById(R.id.additionalTextBox)).getText());
         } catch (Exception e) {
             Log.e("JSON Symptom Parse", e.toString());

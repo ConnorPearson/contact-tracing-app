@@ -34,10 +34,10 @@ public class setup extends AppCompatActivity {
          JSONObject userData = new JSONObject();
 
          try {
-             userData.put("firstname", ((TextView) findViewById(R.id.firstNameTxt)).getText());
+             userData.put("firstName", ((TextView) findViewById(R.id.firstNameTxt)).getText());
              userData.put("surname", ((TextView) findViewById(R.id.surnameTxt)).getText());
              userData.put("address", ((TextView) findViewById(R.id.addressTxt)).getText());
-             userData.put("passportid", ((TextView) findViewById(R.id.passportIDTxt)).getText());
+             userData.put("passportID", ((TextView) findViewById(R.id.passportIDTxt)).getText());
 
          } catch (JSONException e) {
              e.printStackTrace();
