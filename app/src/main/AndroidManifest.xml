@@ -3,7 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.contacttracingapp">
 
+    <!-- Below required for requests to server / internet-->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Below required for bluetooth connectivity-->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="Manifest.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
 
     <application
         android:allowBackup="true"
@@ -35,6 +45,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
+        <!--Service start receiver-->
+        <receiver android:name=".serviceReceiver" android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -46,6 +64,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- BLE tracing service -->
+        <service android:name=".covidBLETracer" android:enabled="true"/>
     </application>
 
 </manifest>

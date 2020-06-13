@@ -23,12 +23,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "Main activity";
     private static JSONObject userData = new JSONObject();
 
     @Override
@@ -38,14 +41,15 @@ public class MainActivity extends AppCompatActivity {
 
         boolean isSetupComplete = getSharedPreferences("isSetupComplete", MODE_PRIVATE).getBoolean("isSetupComplete", true);
 
-        userData = loadUserData();
-
-        setupPageAttributes();
-
         if (isSetupComplete) {
             Intent intent = new Intent(this, setup.class);
             startActivityForResult(intent, 1);
+
             finish();
+        }
+        else {
+            userData = loadUserData(getApplicationContext());
+            setupPageAttributes();
         }
     }
 
@@ -86,28 +90,43 @@ public class MainActivity extends AppCompatActivity {
         startActivity(launchBrowser);
     }
 
-    private JSONObject loadUserData() {
+    public static JSONObject loadUserData(Context context) {
         JSONObject userData = null;
 
         try {
-            InputStream inputStream = getApplicationContext().openFileInput("userData.json");
+            InputStream inputStream = context.openFileInput("userData.json");
 
-            if (inputStream != null) {
-                InputStreamReader inputReader = new InputStreamReader(inputStream);
-                BufferedReader br = new BufferedReader(inputReader);
+            Log.i(TAG, String.valueOf(context.openFileInput("userData.json")));
 
-                userData = new JSONObject(br.readLine());
-
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString =  bufferedReader.readLine();
                 inputStream.close();
+
+                userData = new JSONObject(receiveString);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        catch (FileNotFoundException e) {
+            Log.e(TAG, "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e(TAG, "Cannot read file: " + e.toString());
+        } catch (JSONException e) {
+            Log.e(TAG, "Cannot convert dat to JSON: " + e.toString());
+        }
+
         return userData;
     }
 
     public void openReportSymptoms(View view) {
         Intent intent = new Intent(this, ReportSymptoms.class);
+        try {
+            //Pass uuid into symptoms report for posting
+            intent.putExtra("UUID", userData.get("uuid").toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         startActivityForResult(intent, 2);
     }
 

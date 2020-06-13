@@ -15,14 +15,19 @@ import org.json.JSONObject;
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.UUID;
 
 public class ReportSymptoms extends AppCompatActivity {
     private int checkedElements = 0;
+    private UUID uuid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_symptoms);
+
+        Intent intent = getIntent();
+        uuid = UUID.fromString(intent.getStringExtra("UUID"));
     }
 
     public void logCheckedElement(View view) {
@@ -38,13 +43,22 @@ public class ReportSymptoms extends AppCompatActivity {
     }
 
     public void submitSymptoms(View view) throws InterruptedException {
+        //Send symptoms data
+        postData("http://192.168.0.90:3000/receiveSymptomaticData", createSymptomsJson().toString());
+
+        //Send UUID of user
+        postData("http://192.168.0.90:3000/receiveUUID",uuid.toString());
+
+    }
+
+    public void postData(final String urlData, final String data) throws InterruptedException {
         final boolean[] connectionSuccess = new boolean[1];
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://192.168.0.90:3000/receiveSymptomaticData");
+                    URL url = new URL(urlData);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                     connection.setRequestMethod("POST");
@@ -55,18 +69,18 @@ public class ReportSymptoms extends AppCompatActivity {
 
                     DataOutputStream os = new DataOutputStream(connection.getOutputStream());
 
-                    os.writeBytes(createSymptomsJson().toString());
+                    os.writeBytes(data);
 
                     os.flush();
                     os.close();
 
-                     if(connection.getResponseCode() == 200) {
-                         connectionSuccess[0] = true;
-                     }
-                     else {
-                         connectionSuccess[0] = false;
-                         throw new Exception();
-                     }
+                    if(connection.getResponseCode() == 200) {
+                        connectionSuccess[0] = true;
+                    }
+                    else {
+                        connectionSuccess[0] = false;
+                        throw new Exception();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
