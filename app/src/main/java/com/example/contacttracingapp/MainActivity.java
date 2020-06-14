@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        System.out.println(getStatus());
-
         //Get status from file and apply
         applyStatus(getStatus());
     }
@@ -67,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected  void onStart() {
         super.onStart();
-
-        System.out.println(getStatus());
 
         //Get status from file and apply
         applyStatus(getStatus());
@@ -105,8 +101,6 @@ public class MainActivity extends AppCompatActivity {
         JSONObject userDataJson;
 
         status = fileReadWrite.loadFromFile(this, "userData.json");
-
-        System.out.println(status);
 
         try {
             userDataJson = new JSONObject(status);
@@ -156,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bitmap = TextToImageEncode(userData.toString());
             QRCodeImg.setImageBitmap(bitmap);
         } catch (Exception e) {
-            System.out.println(e.toString());
+            Log.e(TAG, "setupPageAttributes: ", e);
         }
     }
 
@@ -166,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             bitMatrix = new MultiFormatWriter().encode(
                     Value,
                     BarcodeFormat.QR_CODE,
-                    99, 99, null
+                    120, 120, null
             );
         } catch (IllegalArgumentException Illegalargumentexception) {
             return null;
@@ -186,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Bitmap bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444);
-        bitmap.setPixels(pixels, 0, 99, 0, 0, bitMatrixWidth, bitMatrixHeight);
+        bitmap.setPixels(pixels, 0, 120, 0, 0, bitMatrixWidth, bitMatrixHeight);
 
         return bitmap;
     }
@@ -202,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             writer.close();
 
         } catch (Exception e) {
-            Log.e("User data write", e.toString());
+            Log.e("User data write", "Change status method", e);
         }
 
         applyStatus(color.toUpperCase());

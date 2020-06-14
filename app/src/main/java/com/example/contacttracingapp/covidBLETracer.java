@@ -32,15 +32,26 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+
+import javax.xml.datatype.Duration;
 
 public class covidBLETracer extends Service {
     private static final String TAG = "bluetooth";
@@ -58,6 +69,7 @@ public class covidBLETracer extends Service {
     private JSONArray closeProximityUUIDs = new JSONArray();
     private UUID userUUID;
     private String userStatus = "";
+    SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -72,12 +84,13 @@ public class covidBLETracer extends Service {
         chan.setLightColor(Color.BLUE);
         chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
 
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        assert manager != null;
-        manager.createNotificationChannel(chan);
+        NotificationManager serviceManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        assert serviceManager != null;
+        serviceManager.createNotificationChannel(chan);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
-        Notification notification = notificationBuilder.setOngoing(true)
+        Notification serviceNotification = notificationBuilder.setOngoing(true)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle("Corona virus contact tracing service")
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
@@ -85,7 +98,7 @@ public class covidBLETracer extends Service {
                 .build();
 
         //Starts notification, needs to start within 5 seconds of serviceReceiver trigger
-        startForeground(2, notification);
+        startForeground(2, serviceNotification);
 
         //Load in string from file and convert to JSON for parsing
         try {
@@ -98,10 +111,9 @@ public class covidBLETracer extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "onStartCommand: " + userUUID.toString());
-
         startLeScan();
         startLeAdvert();
+
         checkStatus();
 
         return START_STICKY;
@@ -123,9 +135,8 @@ public class covidBLETracer extends Service {
         mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
     }
 
-    private void checkStatus()  {
+    private void checkStatus() {
         final JSONObject userUUIDJson = new JSONObject();
-        final String prevUserStatus = userStatus;
 
         try {
             userUUIDJson.put("uuid", userUUID.toString());
@@ -140,6 +151,7 @@ public class covidBLETracer extends Service {
                     URL url = new URL("http://192.168.0.90:3000/getStatus");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+                    //Setup connection preferences
                     connection.setRequestMethod("POST");
                     connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
                     connection.setRequestProperty("Accept", "application/json");
@@ -153,43 +165,42 @@ public class covidBLETracer extends Service {
                     os.flush();
                     os.close();
 
-                    if (connection.getResponseCode() == 200) {
-                        InputStreamReader input = new InputStreamReader(connection.getInputStream());
-                        BufferedReader bufferedReader = new BufferedReader(input);
+                    InputStreamReader input = new InputStreamReader(connection.getInputStream());
+                    BufferedReader bufferedReader = new BufferedReader(input);
+                    JSONObject userDataJson;
 
-                        userStatus = bufferedReader.readLine();
+                    userStatus = bufferedReader.readLine();
 
-                        //If status has changed and status is RED, post UUIDs of potentially exposed users
-                        if (!prevUserStatus.equals(userStatus)) {
-                            System.out.println("User status : " + userStatus);
-                            if(userStatus.equals("RED")) {
-                                JSONObject userDataJson;
+                    //If status has changed and status is RED, post UUIDs of potentially exposed users
+                    if (userStatus.equals("RED") && connection.getResponseCode() == 200) {
+                        //Load userData from file
+                        userDataJson = new JSONObject(fileReadWrite.loadFromFile(getApplicationContext(), "userData.json"));
 
-                                try {
-                                    userDataJson =new JSONObject(fileReadWrite.loadFromFile(getApplicationContext(), "userData.json"));
+                        //Change JSON status value then write file back
+                        userDataJson.remove("status");
+                        userDataJson.put("status", "RED");
 
-                                    userDataJson.remove("status");
-                                    userDataJson.put("status", "RED");
-
-                                    fileReadWrite.writeToFile(userDataJson.toString(), "userData.json", getApplicationContext());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    } else {
-                        throw new Exception();
+                        fileReadWrite.writeToFile(userDataJson.toString(), "userData.json", getApplicationContext());
                     }
-                } catch (Exception e) {
+
+                    //Throw exception if code represents connection failure
+                    if (connection.getResponseCode() != 200){
+                        throw new ConnectException();
+                    }
+
+                } catch (IOException e) {
                     e.printStackTrace();
                     Toast toast = Toast.makeText(getApplicationContext(), "Connection error occurred! Please make sure you have an active internet connection, then try again.", Toast.LENGTH_LONG);
                     toast.show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         });
 
+        //Every 5 seconds check the current status of the user via the uuid
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(thread, 0, 10, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(thread, 0, 5, TimeUnit.SECONDS);
     }
 
     public void startLeAdvert() {
@@ -256,10 +267,8 @@ public class covidBLETracer extends Service {
                 //Write proximity uuids back to file
                 fileReadWrite.writeToFile(closeProximityUUIDs.toString(), "proximityUuids.json", getApplicationContext());
 
-                Log.i(TAG, "Adding UUID to file : " +  uuid);
+                Log.i(TAG, "Adding UUID to file : " + uuid);
             }
-
-            Log.i(TAG, "onScanResult: " + closeProximityUUIDs.toString());
         }
 
         @Override

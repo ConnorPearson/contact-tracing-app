@@ -18,6 +18,5 @@ public class serviceReceiver extends BroadcastReceiver{
         } else {
             context.startService(intent);
         }
-        Log.i("Autostart", "started");
     }
 }
