@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,17 +23,20 @@ import com.google.zxing.common.BitMatrix;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "Main activity";
+    private static final String TAG = "Main Activity";
     private static JSONObject userData = new JSONObject();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //Get status from file and apply
+        applyStatus(getStatus());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +52,25 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         else {
-            userData = loadUserData(getApplicationContext());
+            try {
+                userData = new JSONObject(fileReadWrite.loadFromFile(this, "userData.json"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             setupPageAttributes();
         }
+
+        //Get status from file and apply
+        applyStatus(getStatus());
+    }
+
+    @Override
+    protected  void onStart() {
+        super.onStart();
+
+        //Get status from file and apply
+        applyStatus(getStatus());
     }
 
     @Override
@@ -79,6 +99,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private String getStatus() {
+        String status;
+        JSONObject userDataJson;
+
+        status = fileReadWrite.loadFromFile(this, "userData.json");
+
+        try {
+            userDataJson = new JSONObject(status);
+            status = userDataJson.getString("status");
+        } catch (Exception e) {
+            Log.e(TAG, "checkStatus: ", e);
+        }
+
+        return status;
+    }
+
     public void openStatusDescription(View view) {
         Intent intent = new Intent(this, StatusDescription.class);
         startActivity(intent);
@@ -90,39 +126,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(launchBrowser);
     }
 
-    public static JSONObject loadUserData(Context context) {
-        JSONObject userData = null;
-
-        try {
-            InputStream inputStream = context.openFileInput("userData.json");
-
-            Log.i(TAG, String.valueOf(context.openFileInput("userData.json")));
-
-            if ( inputStream != null ) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString =  bufferedReader.readLine();
-                inputStream.close();
-
-                userData = new JSONObject(receiveString);
-            }
-        }
-        catch (FileNotFoundException e) {
-            Log.e(TAG, "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e(TAG, "Cannot read file: " + e.toString());
-        } catch (JSONException e) {
-            Log.e(TAG, "Cannot convert dat to JSON: " + e.toString());
-        }
-
-        return userData;
-    }
-
     public void openReportSymptoms(View view) {
         Intent intent = new Intent(this, ReportSymptoms.class);
         try {
             //Pass uuid into symptoms report for posting
-            intent.putExtra("UUID", userData.get("uuid").toString());
+            intent.putExtra("uuid", userData.get("uuid").toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -155,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             bitMatrix = new MultiFormatWriter().encode(
                     Value,
                     BarcodeFormat.QR_CODE,
-                    144, 144, null
+                    99, 99, null
             );
         } catch (IllegalArgumentException Illegalargumentexception) {
             return null;
@@ -175,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Bitmap bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444);
-        bitmap.setPixels(pixels, 0, 144, 0, 0, bitMatrixWidth, bitMatrixHeight);
+        bitmap.setPixels(pixels, 0, 99, 0, 0, bitMatrixWidth, bitMatrixHeight);
 
         return bitmap;
     }

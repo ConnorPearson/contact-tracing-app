@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
@@ -26,8 +27,9 @@ public class ReportSymptoms extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_symptoms);
 
-        Intent intent = getIntent();
-        uuid = UUID.fromString(intent.getStringExtra("UUID"));
+        Bundle extras = getIntent().getExtras();
+        assert extras != null;
+        uuid = UUID.fromString(extras.getString("uuid"));
     }
 
     public void logCheckedElement(View view) {
@@ -43,11 +45,19 @@ public class ReportSymptoms extends AppCompatActivity {
     }
 
     public void submitSymptoms(View view) throws InterruptedException {
+        JSONObject uuidJson = new JSONObject();
+
+        try {
+            uuidJson.put("uuid", uuid);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         //Send symptoms data
         postData("http://192.168.0.90:3000/receiveSymptomaticData", createSymptomsJson().toString());
 
-        //Send UUID of user
-        postData("http://192.168.0.90:3000/receiveUUID",uuid.toString());
+        //Send uuids of previously close proximity devices
+        postData("http://192.168.0.90:3000/receiveProximityUuids", fileReadWrite.loadFromFile(this, "proximityUuids.json"));
 
     }
 
@@ -97,11 +107,7 @@ public class ReportSymptoms extends AppCompatActivity {
             finish();
         }
         else {
-            CharSequence text = "Connection error occurred! Please make sure you have an active internet connection, then try again.";
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-            toast.show();
+            Toast.makeText(this, "Connection error occurred! Please make sure you have an active internet connection, then try again.", Toast.LENGTH_LONG).show();
         }
     }
 

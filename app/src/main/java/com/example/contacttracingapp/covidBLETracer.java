@@ -21,15 +21,26 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class covidBLETracer extends Service {
     private static final String TAG = "bluetooth";
@@ -44,9 +55,9 @@ public class covidBLETracer extends Service {
 
     private BluetoothLeAdvertiser advertiser = BluetoothAdapter.getDefaultAdapter().getBluetoothLeAdvertiser();
     private BluetoothLeScanner mBluetoothLeScanner = BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner();
-
-    private ArrayList<UUID> closeProximityUUIDs = new ArrayList<>();
-    private UUID userUUID = null;
+    private JSONArray closeProximityUUIDs = new JSONArray();
+    private UUID userUUID;
+    private String userStatus = "";
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -54,13 +65,6 @@ public class covidBLETracer extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void onCreate() {
-        //Load UUID from file
-        try {
-            userUUID = UUID.fromString(MainActivity.loadUserData(this).getString("uuid"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
         //Construct the service notification required for background services in newer android api's
         String NOTIFICATION_CHANNEL_ID = "com.example.contacttracingapp";
         String channelName = "My Background Service";
@@ -80,8 +84,16 @@ public class covidBLETracer extends Service {
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
 
-        //Starts notification, needs to start whithin 5 seconds of serviceReceiver trigger
+        //Starts notification, needs to start within 5 seconds of serviceReceiver trigger
         startForeground(2, notification);
+
+        //Load in string from file and convert to JSON for parsing
+        try {
+            JSONObject userDataJson = new JSONObject(fileReadWrite.loadFromFile(this, "userData.json"));
+            userUUID = UUID.fromString(userDataJson.getString("uuid"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -90,6 +102,7 @@ public class covidBLETracer extends Service {
 
         startLeScan();
         startLeAdvert();
+        checkStatus();
 
         return START_STICKY;
     }
@@ -108,6 +121,82 @@ public class covidBLETracer extends Service {
                 .build();
 
         mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
+    }
+
+    private void checkStatus() {
+        JSONObject userUUIDJson = new JSONObject();
+        String prevUserStatus = userStatus;
+
+        try {
+            userUUIDJson.put("uuid", userUUID.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        postData("http://192.168.0.90:3000/getStatus", userUUIDJson.toString());
+
+        //If status has changed and status is RED, post UUIDs of potentially exposed users
+        if (!prevUserStatus.equals(userStatus)) {
+            if(userStatus.equals("RED")) {
+                postProximityUuids();
+            }
+        }
+    }
+
+    //Send uuids of devices that have been close to the symptomatic user
+    private void postProximityUuids() {
+        JSONArray exposedUuids = new JSONArray();
+
+        try {
+            exposedUuids = new JSONArray(fileReadWrite.loadFromFile(this, "exposedUuids.json"));
+        } catch (Exception e) {
+            Log.e(TAG, "postProximityUuids: ", e);
+        }
+
+        exposedUuids.put(userUUID);
+
+        postData("http://192.168.0.90:3000/receiveProximityUuids", exposedUuids.toString());
+    }
+
+    public void postData(final String urlData, final String data)  {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL(urlData);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                    connection.setRequestProperty("Accept", "application/json");
+                    connection.setDoOutput(true);
+                    connection.setDoInput(true);
+
+                    DataOutputStream os = new DataOutputStream(connection.getOutputStream());
+
+                    os.writeBytes(data);
+
+                    os.flush();
+                    os.close();
+
+                    if (connection.getResponseCode() == 200) {
+                        InputStreamReader input = new InputStreamReader(connection.getInputStream());
+                        BufferedReader bufferedReader = new BufferedReader(input);
+
+                        userStatus = bufferedReader.readLine();
+                    } else {
+                        throw new Exception();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast toast = Toast.makeText(getApplicationContext(), "Connection error occurred! Please make sure you have an active internet connection, then try again.", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            }
+        });
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(thread, 0, 10, TimeUnit.SECONDS);
     }
 
     public void startLeAdvert() {
@@ -138,7 +227,6 @@ public class covidBLETracer extends Service {
     }
 
     private ScanCallback mScanCallback = new ScanCallback() {
-
         //Truncates data to derive UUID, no built in function for get UUID so this was the solution
         private UUID trimUUID(String data) {
             try {
@@ -160,12 +248,25 @@ public class covidBLETracer extends Service {
             //Process trim on result UUID, getUUID is not a function of result by default
             UUID uuid = trimUUID(result.toString());
 
-            //If the UUID is already in ArrayList, don't write value
-            if (!closeProximityUUIDs.contains(uuid)) {
-                closeProximityUUIDs.add(uuid);
+            //Read in proximity UUIDs file
+            try {
+                closeProximityUUIDs = new JSONArray(fileReadWrite.loadFromFile(getApplicationContext(), "proximityUuids.json"));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-            Log.i(TAG, String.valueOf(result));
+            //If the UUID is already in ArrayList, don't write value
+            assert uuid != null;
+            if (!closeProximityUUIDs.toString().contains(uuid.toString())) {
+                closeProximityUUIDs.put(uuid);
+
+                //Write proximity uuids back to file
+                fileReadWrite.writeToFile(closeProximityUUIDs.toString(), "proximityUuids.json", getApplicationContext());
+
+                Log.i(TAG, "Adding UUID to file : " +  uuid);
+            }
+
+            Log.i(TAG, "onScanResult: " + closeProximityUUIDs.toString());
         }
 
         @Override

@@ -80,7 +80,10 @@ public class setup extends AppCompatActivity {
              startActivity(intent);
 
              //Write user data json to application directory
-             writeToFile(createUserDataJson().toString());
+             fileReadWrite.writeToFile(createUserDataJson().toString(), "userData.json", this);
+
+             //Write create file for close proximity scanned UUIDS
+             fileReadWrite.writeToFile("[]", "proximityUuids.json", this);
 
              finish();
 
@@ -95,18 +98,6 @@ public class setup extends AppCompatActivity {
              toast.show();
          }
      }
-
-    private void writeToFile(String data) {
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(new File(getFilesDir() + "/" + "userData.json"));
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
 
      private boolean checkFieldsPopulated() {
          return     ((TextView)findViewById(R.id.firstNameTxt)).length() > 0 &
