@@ -37,21 +37,12 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-
-import javax.xml.datatype.Duration;
 
 public class covidBLETracer extends Service {
     private static final String TAG = "bluetooth";
@@ -69,7 +60,6 @@ public class covidBLETracer extends Service {
     private JSONArray closeProximityUUIDs = new JSONArray();
     private UUID userUUID;
     private String userStatus = "";
-    SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 
     public IBinder onBind(Intent intent) {
         return null;
