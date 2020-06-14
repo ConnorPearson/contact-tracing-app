@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        System.out.println(getStatus());
+
         //Get status from file and apply
         applyStatus(getStatus());
     }
@@ -60,14 +62,13 @@ public class MainActivity extends AppCompatActivity {
 
             setupPageAttributes();
         }
-
-        //Get status from file and apply
-        applyStatus(getStatus());
     }
 
     @Override
     protected  void onStart() {
         super.onStart();
+
+        System.out.println(getStatus());
 
         //Get status from file and apply
         applyStatus(getStatus());
@@ -104,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         JSONObject userDataJson;
 
         status = fileReadWrite.loadFromFile(this, "userData.json");
+
+        System.out.println(status);
 
         try {
             userDataJson = new JSONObject(status);

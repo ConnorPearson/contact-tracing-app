@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,10 +46,11 @@ public class ReportSymptoms extends AppCompatActivity {
     }
 
     public void submitSymptoms(View view) throws InterruptedException {
-        JSONObject uuidJson = new JSONObject();
+        JSONArray proximityUUIDs = new JSONArray();
 
         try {
-            uuidJson.put("uuid", uuid);
+            proximityUUIDs = new JSONArray(fileReadWrite.loadFromFile(this, "proximityUuids.json"));
+            proximityUUIDs.put( uuid);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -57,8 +59,7 @@ public class ReportSymptoms extends AppCompatActivity {
         postData("http://192.168.0.90:3000/receiveSymptomaticData", createSymptomsJson().toString());
 
         //Send uuids of previously close proximity devices
-        postData("http://192.168.0.90:3000/receiveProximityUuids", fileReadWrite.loadFromFile(this, "proximityUuids.json"));
-
+        postData("http://192.168.0.90:3000/receiveProximityUuids", proximityUUIDs.toString());
     }
 
     public void postData(final String urlData, final String data) throws InterruptedException {

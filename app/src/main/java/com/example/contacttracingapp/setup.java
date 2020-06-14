@@ -58,6 +58,7 @@ public class setup extends AppCompatActivity {
              userData.put("address", ((TextView) findViewById(R.id.addressTxt)).getText());
              userData.put("passportID", ((TextView) findViewById(R.id.passportIDTxt)).getText());
              userData.put("uuid", UUID.randomUUID().toString());
+             userData.put("status", "GREEN");
 
          } catch (JSONException e) {
              e.printStackTrace();

@@ -123,9 +123,9 @@ public class covidBLETracer extends Service {
         mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
     }
 
-    private void checkStatus() {
-        JSONObject userUUIDJson = new JSONObject();
-        String prevUserStatus = userStatus;
+    private void checkStatus()  {
+        final JSONObject userUUIDJson = new JSONObject();
+        final String prevUserStatus = userStatus;
 
         try {
             userUUIDJson.put("uuid", userUUID.toString());
@@ -133,37 +133,11 @@ public class covidBLETracer extends Service {
             e.printStackTrace();
         }
 
-        postData("http://192.168.0.90:3000/getStatus", userUUIDJson.toString());
-
-        //If status has changed and status is RED, post UUIDs of potentially exposed users
-        if (!prevUserStatus.equals(userStatus)) {
-            if(userStatus.equals("RED")) {
-                postProximityUuids();
-            }
-        }
-    }
-
-    //Send uuids of devices that have been close to the symptomatic user
-    private void postProximityUuids() {
-        JSONArray exposedUuids = new JSONArray();
-
-        try {
-            exposedUuids = new JSONArray(fileReadWrite.loadFromFile(this, "exposedUuids.json"));
-        } catch (Exception e) {
-            Log.e(TAG, "postProximityUuids: ", e);
-        }
-
-        exposedUuids.put(userUUID);
-
-        postData("http://192.168.0.90:3000/receiveProximityUuids", exposedUuids.toString());
-    }
-
-    public void postData(final String urlData, final String data)  {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    URL url = new URL(urlData);
+                    URL url = new URL("http://192.168.0.90:3000/getStatus");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                     connection.setRequestMethod("POST");
@@ -174,7 +148,7 @@ public class covidBLETracer extends Service {
 
                     DataOutputStream os = new DataOutputStream(connection.getOutputStream());
 
-                    os.writeBytes(data);
+                    os.writeBytes(userUUIDJson.toString());
 
                     os.flush();
                     os.close();
@@ -184,6 +158,25 @@ public class covidBLETracer extends Service {
                         BufferedReader bufferedReader = new BufferedReader(input);
 
                         userStatus = bufferedReader.readLine();
+
+                        //If status has changed and status is RED, post UUIDs of potentially exposed users
+                        if (!prevUserStatus.equals(userStatus)) {
+                            System.out.println("User status : " + userStatus);
+                            if(userStatus.equals("RED")) {
+                                JSONObject userDataJson;
+
+                                try {
+                                    userDataJson =new JSONObject(fileReadWrite.loadFromFile(getApplicationContext(), "userData.json"));
+
+                                    userDataJson.remove("status");
+                                    userDataJson.put("status", "RED");
+
+                                    fileReadWrite.writeToFile(userDataJson.toString(), "userData.json", getApplicationContext());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     } else {
                         throw new Exception();
                     }
