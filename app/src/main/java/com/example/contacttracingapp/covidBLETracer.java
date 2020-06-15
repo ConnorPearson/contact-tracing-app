@@ -256,8 +256,13 @@ public class covidBLETracer extends Service {
 
                 //Write proximity uuids back to file
                 fileReadWrite.writeToFile(closeProximityUUIDs.toString(), "proximityUuids.json", getApplicationContext());
-
                 Log.i(TAG, "Adding UUID to file : " + uuid);
+
+                Log.i(TAG, "onScanResult: " + userStatus);
+
+                //If user status equals red post any new proximity uuid
+                if (userStatus.equals("RED"))
+                    postData("http://192.168.0.90:3000/receiveProximityUuids", closeProximityUUIDs.toString());
             }
         }
 
@@ -272,5 +277,48 @@ public class covidBLETracer extends Service {
             super.onScanFailed(errorCode);
         }
     };
+
+    public void postData(final String urlData, final String data)  {
+        final boolean[] connectionSuccess = new boolean[1];
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL(urlData);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                    connection.setRequestProperty("Accept","application/json");
+                    connection.setDoOutput(true);
+                    connection.setDoInput(true);
+
+                    DataOutputStream os = new DataOutputStream(connection.getOutputStream());
+
+                    os.writeBytes(data);
+
+                    os.flush();
+                    os.close();
+
+                    if(connection.getResponseCode() == 200) {
+                        connectionSuccess[0] = true;
+                    }
+                    else {
+                        connectionSuccess[0] = false;
+                        throw new Exception();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+
+        if (!connectionSuccess[0]){
+            Toast.makeText(this, "Connection error occurred! Please make sure you have an active internet connection, then try again.", Toast.LENGTH_LONG).show();
+        }
+    }
 }
 
