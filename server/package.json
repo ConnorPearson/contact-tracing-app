@@ -1,0 +1,21 @@
+{
+  "name": "contacttracingappserver",
+  "version": "1.0.0",
+  "description": "Contact tracing application server.",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "author": "Connor Pearson",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "fs-extra": "^9.0.0",
+    "http": "0.0.1-security",
+    "moment": "^2.26.0",
+    "string-sanitizer": "^1.1.1"
+  }
+}
