@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -185,13 +184,13 @@ public class MainActivity extends AppCompatActivity {
         return bitmap;
     }
 
-    private void changeStatus(String color) {
+    public void changeStatus(String color) {
         OutputStreamWriter writer;
 
         try {
             userData.put("status", color.toUpperCase());
 
-            writer = new OutputStreamWriter(getApplicationContext().openFileOutput("userData.json", Context.MODE_PRIVATE));
+            writer = new OutputStreamWriter(this.openFileOutput("userData.json", Context.MODE_PRIVATE));
             writer.write(userData.toString());
             writer.close();
 
@@ -205,19 +204,14 @@ public class MainActivity extends AppCompatActivity {
     private void applyStatus(String status){
         int statusColor;
 
-        switch (status.toUpperCase()) {
-            case "GREEN":
-                statusColor = Color.parseColor("#59ff00");
-                break;
-
-            case "AMBER" :
-                statusColor = Color.parseColor("#fceb05");
-                break;
-
-            default:    //Default to red as precaution if an error occurs
-                statusColor = Color.parseColor("#fc0505");
-                status = "RED";
-                break;
+        //Default to red as precaution if an error occurs
+        if ("GREEN".equals(status.toUpperCase())) {
+            statusColor = Color.parseColor("#59ff00");
+            findViewById(R.id.reportSymptomsBtn).setEnabled(true);
+        } else {
+            statusColor = Color.parseColor("#fc0505");
+            status = "RED";
+            findViewById(R.id.reportSymptomsBtn).setEnabled(false);
         }
 
         ((TextView)findViewById(R.id.statusValueTxt)).setText(status);

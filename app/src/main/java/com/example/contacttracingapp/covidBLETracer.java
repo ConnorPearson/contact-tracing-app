@@ -162,13 +162,13 @@ public class covidBLETracer extends Service {
                     userStatus = bufferedReader.readLine();
 
                     //If status has changed and status is RED, post UUIDs of potentially exposed users
-                    if (userStatus.equals("RED") && connection.getResponseCode() == 200) {
+                    if (connection.getResponseCode() == 200) {
                         //Load userData from file
                         userDataJson = new JSONObject(fileReadWrite.loadFromFile(getApplicationContext(), "userData.json"));
 
                         //Change JSON status value then write file back
                         userDataJson.remove("status");
-                        userDataJson.put("status", "RED");
+                        userDataJson.put("status", userStatus);
 
                         fileReadWrite.writeToFile(userDataJson.toString(), "userData.json", getApplicationContext());
                     }
