@@ -79,7 +79,7 @@ public class setup extends AppCompatActivity {
              fileReadWrite.writeToFile(createUserDataJson().toString(), "userData.json", this);
 
              //Write create file for close proximity scanned UUIDS
-             fileReadWrite.writeToFile("[]", "proximityUuids.json", this);
+             fileReadWrite.writeToFile("{}", "proximityUuids.json", this);
 
              finish();
 

@@ -26,7 +26,6 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +37,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -57,7 +57,8 @@ public class covidBLETracer extends Service {
 
     private BluetoothLeAdvertiser advertiser = BluetoothAdapter.getDefaultAdapter().getBluetoothLeAdvertiser();
     private BluetoothLeScanner mBluetoothLeScanner = BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner();
-    private JSONArray closeProximityUUIDs = new JSONArray();
+    private JSONObject closeProximityUUIDs = new JSONObject();
+
     private UUID userUUID;
     private String userStatus = "";
 
@@ -188,9 +189,9 @@ public class covidBLETracer extends Service {
             }
         });
 
-        //Every 5 seconds check the current status of the user via the uuid
+        //Every 20 seconds check the current status of the user via the uuid
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(thread, 0, 5, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(thread, 0, 20, TimeUnit.SECONDS);
     }
 
     public void startLeAdvert() {
@@ -242,9 +243,33 @@ public class covidBLETracer extends Service {
             //Process trim on result UUID, getUUID is not a function of result by default
             UUID uuid = trimUUID(result.toString());
 
+            try{
+                assert uuid != null;
+                if (potentialProximityUuids.toString().contains(uuid.toString())) {
+                long prevTime = (long) potentialProximityUuids.get(uuid.toString());
+
+                //Check how long the user had been near the UUID (10 minute exposure time)
+                if (new Date().getTime() - prevTime > 600000)   {
+                    writeUuidsToFile(uuid);
+                }
+            }
+            else {
+                try {
+                    potentialProximityUuids.put(uuid.toString(), new Date().getTime());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void writeUuidsToFile(UUID uuid) throws JSONException {
             //Read in proximity UUIDs file
             try {
-                closeProximityUUIDs = new JSONArray(fileReadWrite.loadFromFile(getApplicationContext(), "proximityUuids.json"));
+                closeProximityUUIDs = new JSONObject(fileReadWrite.loadFromFile(getApplicationContext(), "proximityUuids.json"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -252,19 +277,20 @@ public class covidBLETracer extends Service {
             //If the UUID is already in ArrayList, don't write value
             assert uuid != null;
             if (!closeProximityUUIDs.toString().contains(uuid.toString())) {
-                closeProximityUUIDs.put(uuid);
+                closeProximityUUIDs.put(uuid.toString(), new Date().getTime());
 
                 //Write proximity uuids back to file
                 fileReadWrite.writeToFile(closeProximityUUIDs.toString(), "proximityUuids.json", getApplicationContext());
                 Log.i(TAG, "Adding UUID to file : " + uuid);
 
-                Log.i(TAG, "onScanResult: " + userStatus);
-
                 //If user status equals red post any new proximity uuid
                 if (userStatus.equals("RED"))
-                    postData("http://192.168.0.90:3000/receiveProximityUuids", closeProximityUUIDs.toString());
+                    postData("http://192.168.0.90:3000/receiveProximityUuids", closeProximityUUIDs.keys().toString());
+
             }
         }
+
+        JSONObject potentialProximityUuids = new JSONObject();
 
         @Override
         public void onBatchScanResults(List<ScanResult> results) {

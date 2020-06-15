@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,7 +33,7 @@ public class ReportSymptoms extends AppCompatActivity {
     }
 
     public void logCheckedElement(View view) {
-        if (((CheckBox)view).isChecked())
+        if (((CheckBox) view).isChecked())
             checkedElements++;
         else
             checkedElements--;
@@ -46,11 +45,11 @@ public class ReportSymptoms extends AppCompatActivity {
     }
 
     public void submitSymptoms(View view) throws InterruptedException {
-        JSONArray proximityUUIDs = new JSONArray();
+        JSONObject proximityUUIDs = new JSONObject();
 
         try {
-            proximityUUIDs = new JSONArray(fileReadWrite.loadFromFile(this, "proximityUuids.json"));
-            proximityUUIDs.put( uuid);
+            proximityUUIDs = new JSONObject(fileReadWrite.loadFromFile(this, "proximityUuids.json"));
+            proximityUUIDs.put(uuid.toString(), "");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -74,7 +73,7 @@ public class ReportSymptoms extends AppCompatActivity {
 
                     connection.setRequestMethod("POST");
                     connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-                    connection.setRequestProperty("Accept","application/json");
+                    connection.setRequestProperty("Accept", "application/json");
                     connection.setDoOutput(true);
                     connection.setDoInput(true);
 
@@ -85,10 +84,9 @@ public class ReportSymptoms extends AppCompatActivity {
                     os.flush();
                     os.close();
 
-                    if(connection.getResponseCode() == 200) {
+                    if (connection.getResponseCode() == 200) {
                         connectionSuccess[0] = true;
-                    }
-                    else {
+                    } else {
                         connectionSuccess[0] = false;
                         throw new Exception();
                     }
@@ -101,13 +99,12 @@ public class ReportSymptoms extends AppCompatActivity {
         thread.start();
         thread.join();
 
-        if (connectionSuccess[0]){
+        if (connectionSuccess[0]) {
             Intent resultIntent = new Intent();
-            resultIntent.putExtra("newStatus",  "RED");
+            resultIntent.putExtra("newStatus", "RED");
             setResult(RESULT_OK, resultIntent);
             finish();
-        }
-        else {
+        } else {
             Toast.makeText(this, "Connection error occurred! Please make sure you have an active internet connection, then try again.", Toast.LENGTH_LONG).show();
         }
     }
@@ -116,17 +113,17 @@ public class ReportSymptoms extends AppCompatActivity {
         JSONObject symptoms = new JSONObject();
 
         try {
-            symptoms.put("fever", ((CheckBox)findViewById(R.id.feverCheckBox)).isChecked());
-            symptoms.put("fatigue", ((CheckBox)findViewById(R.id.fatigueCheckBox)).isChecked());
-            symptoms.put("cough",((CheckBox) findViewById(R.id.dryCoughCheckBox)).isChecked());
-            symptoms.put("lossOfAppetite", ((CheckBox)findViewById(R.id.lossOfAppetiteCheckBox)).isChecked());
-            symptoms.put("bodyAche", ((CheckBox)findViewById(R.id.bodyAchesCheckBox)).isChecked());
-            symptoms.put("breathShortness", ((CheckBox)findViewById(R.id.breathShortnessCheckBox)).isChecked());
+            symptoms.put("fever", ((CheckBox) findViewById(R.id.feverCheckBox)).isChecked());
+            symptoms.put("fatigue", ((CheckBox) findViewById(R.id.fatigueCheckBox)).isChecked());
+            symptoms.put("cough", ((CheckBox) findViewById(R.id.dryCoughCheckBox)).isChecked());
+            symptoms.put("lossOfAppetite", ((CheckBox) findViewById(R.id.lossOfAppetiteCheckBox)).isChecked());
+            symptoms.put("bodyAche", ((CheckBox) findViewById(R.id.bodyAchesCheckBox)).isChecked());
+            symptoms.put("breathShortness", ((CheckBox) findViewById(R.id.breathShortnessCheckBox)).isChecked());
             symptoms.put("mucusOrPhlegm", ((CheckBox) findViewById(R.id.mucusPhlegmCheckBox)).isChecked());
-            symptoms.put("soreThroat", ((CheckBox)findViewById(R.id.soreThroatCheckBox)).isChecked());
-            symptoms.put("headaches",((CheckBox) findViewById(R.id.headachesCheckBox)).isChecked());
-            symptoms.put("chillsAndShaking",((CheckBox) findViewById(R.id.chillsCheckBox)).isChecked());
-            symptoms.put("additional",((TextView) findViewById(R.id.additionalTextBox)).getText());
+            symptoms.put("soreThroat", ((CheckBox) findViewById(R.id.soreThroatCheckBox)).isChecked());
+            symptoms.put("headaches", ((CheckBox) findViewById(R.id.headachesCheckBox)).isChecked());
+            symptoms.put("chillsAndShaking", ((CheckBox) findViewById(R.id.chillsCheckBox)).isChecked());
+            symptoms.put("additional", ((TextView) findViewById(R.id.additionalTextBox)).getText());
         } catch (Exception e) {
             Log.e("JSON Symptom Parse", e.toString());
         }
