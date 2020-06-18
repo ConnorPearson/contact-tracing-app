@@ -243,26 +243,27 @@ public class covidBLETracer extends Service {
             //Process trim on result UUID, getUUID is not a function of result by default
             UUID uuid = trimUUID(result.toString());
 
-            try{
-                assert uuid != null;
-                if (potentialProximityUuids.toString().contains(uuid.toString())) {
-                long prevTime = (long) potentialProximityUuids.get(uuid.toString());
-
-                //Check how long the user had been near the UUID (10 minute exposure time)
-                if (new Date().getTime() - prevTime > 600000)   {
-                    writeUuidsToFile(uuid);
-                }
-            }
-            else {
+            //Prevents potential null object errors
+            if (uuid != null) {
                 try {
-                    potentialProximityUuids.put(uuid.toString(), new Date().getTime());
+                    if (potentialProximityUuids.toString().contains(uuid.toString())) {
+                        long prevTime = (long) potentialProximityUuids.get(uuid.toString());
+
+                        //Check how long the user had been near the UUID (10 minute exposure time)
+                        if (new Date().getTime() - prevTime > 10000) {
+                            writeUuidsToFile(uuid);
+                        }
+                    } else {
+                        try {
+                            potentialProximityUuids.put(uuid.toString(), new Date().getTime());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
 

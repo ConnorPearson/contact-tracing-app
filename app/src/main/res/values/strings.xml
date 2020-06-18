@@ -2,10 +2,10 @@
     <string name="app_name">Covid-19 Health Pass</string>
     <string name="covidUpdatesBtnText">Recent Covid Updates</string>
     <string name="reportSymptomsBtnTxt">Report Your Symptoms</string>
-    <string name="nameTxtView">Name : %1$s  %2$s</string>
-    <string name="addressTxtView">"Address : %1$s"</string>
+    <string name="nameTxtView">Name : </string>
+    <string name="addressTxtView">"Address : "</string>
     <string name="statusTxtView">Exposure status :</string>
-    <string name="passportNumTxtView">"Passport Num : %1$s"</string>
+    <string name="passportNumTxtView">"Passport Num : "</string>
     <string name="statusValueTxt">"GREEN"</string>
     <string name="statusDescriptionBtnText">Status Colour Description</string>
     <string name="setupInstructionText">"Thank you for using the Covid-19 contact tracing application. This app will allow you, your friends and family to stay safe during these difficult times through the use of private and secure tracking of the corona virus. \n\n To get started please enter your details below : "</string>
@@ -28,7 +28,7 @@
     <string name="mucusPhlegmTextBox">Mucus or phlegm</string>
     <string name="soreThroatCheckBox">Sore throat</string>
     <string name="headachesCheckBox">Headaches</string>
-    <string name="additionalTextView">Any additional symptoms :</string>
+    <string name="additionalTextView">Any additional symptoms</string>
     <string name="chillsCheckBox">Chills / Shaking</string>
     <string name="txtStatusGreenDesc" >You are currently not likely to have corona virus. You are safe to go outside as long as you follow social distancing and any additional rules provided by the government.</string>
     <string name="txtStatusAmberDesc" >You potentially have corona virus. You were exposed to someone within contraction radius that is showing symptoms. Stay indoors for two weeks unless you show no symptoms after the first week.</string>

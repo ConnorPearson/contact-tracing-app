@@ -1,5 +1,6 @@
 package com.example.contacttracingapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -134,13 +135,14 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, 2);
     }
 
+    @SuppressLint("SetTextI18n")
     private void setupPageAttributes() {
         ImageView QRCodeImg  = findViewById(R.id.QRCodeImg);
 
         try {
-                ((TextView) findViewById(R.id.nameTxtView)).setText(getString(R.string.nameTxtView, userData.get("firstName"), userData.get("surname")));
-                ((TextView) findViewById(R.id.addressTxtView)).setText(getString(R.string.addressTxtView, userData.get("address")));
-                ((TextView) findViewById(R.id.passportNumTxtView)).setText(getString(R.string.passportNumTxtView, userData.get("passportID")));
+                ((TextView) findViewById(R.id.nameTextVal)).setText(" " + userData.get("firstName") + "\n " + userData.get("surname"));
+                ((TextView) findViewById(R.id.addressTextVal)).setText(userData.get("address").toString());
+                ((TextView) findViewById(R.id.passportTextVal)).setText(userData.get("passportID").toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

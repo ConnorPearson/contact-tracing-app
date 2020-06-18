@@ -52,7 +52,7 @@
             android:layout_height="match_parent"
             android:text="@string/txtStatusRedDesc"
             android:textColor="@android:color/secondary_text_dark"
-            android:textSize="20sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -84,6 +84,6 @@
             android:layout_height="match_parent"
             android:text="@string/txtStatusGreenDesc"
             android:textColor="@android:color/secondary_text_dark"
-            android:textSize="20sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
