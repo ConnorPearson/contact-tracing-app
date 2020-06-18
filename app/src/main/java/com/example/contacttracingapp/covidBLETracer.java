@@ -127,71 +127,39 @@ public class covidBLETracer extends Service {
     }
 
     private void checkStatus() {
-        final JSONObject userUUIDJson = new JSONObject();
-
-        try {
-            userUUIDJson.put("uuid", userUUID.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Thread thread = new Thread(new Runnable() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                JSONObject userData;
+                JSONObject userUUIDJson = new JSONObject();
+
                 try {
-                    URL url = new URL("http://192.168.0.90:3000/getStatus");
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    userUUIDJson.put("uuid", userUUID);
 
-                    //Setup connection preferences
-                    connection.setRequestMethod("POST");
-                    connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-                    connection.setRequestProperty("Accept", "application/json");
-                    connection.setDoOutput(true);
-                    connection.setDoInput(true);
+                    //Get most recent status from server for current device
+                    userStatus = serverComms.postData("http://192.168.0.90:3000/getStatus", userUUIDJson);
 
-                    DataOutputStream os = new DataOutputStream(connection.getOutputStream());
 
-                    os.writeBytes(userUUIDJson.toString());
+                    userData = new JSONObject(fileReadWrite.loadFromFile(getApplicationContext(), "userData.json"));
 
-                    os.flush();
-                    os.close();
+                    System.out.println(userData.get("status") + " " + userStatus);
 
-                    InputStreamReader input = new InputStreamReader(connection.getInputStream());
-                    BufferedReader bufferedReader = new BufferedReader(input);
-                    JSONObject userDataJson;
+                    //If status received is different from file, write new status to file
+                    if(!userData.get("status").equals(userStatus)) {
+                        userData.remove("status");
+                        userData.put("status", userStatus);
 
-                    userStatus = bufferedReader.readLine();
-
-                    //If status has changed and status is RED, post UUIDs of potentially exposed users
-                    if (connection.getResponseCode() == 200) {
-                        //Load userData from file
-                        userDataJson = new JSONObject(fileReadWrite.loadFromFile(getApplicationContext(), "userData.json"));
-
-                        //Change JSON status value then write file back
-                        userDataJson.remove("status");
-                        userDataJson.put("status", userStatus);
-
-                        fileReadWrite.writeToFile(userDataJson.toString(), "userData.json", getApplicationContext());
+                        fileReadWrite.writeToFile(userData.toString(), "userData.json", getApplicationContext());
                     }
-
-                    //Throw exception if code represents connection failure
-                    if (connection.getResponseCode() != 200){
-                        throw new ConnectException();
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast toast = Toast.makeText(getApplicationContext(), "Connection error occurred! Please make sure you have an active internet connection, then try again.", Toast.LENGTH_LONG);
-                    toast.show();
-                } catch (JSONException e) {
+                } catch (JSONException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        });
+        };
 
         //Every 20 seconds check the current status of the user via the uuid
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(thread, 0, 20, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(runnable, 0, 20, TimeUnit.SECONDS);
     }
 
     public void startLeAdvert() {

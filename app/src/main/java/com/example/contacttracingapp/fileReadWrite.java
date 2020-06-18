@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-class fileReadWrite {
+public class fileReadWrite {
     private static final String TAG = "fileReadWrite  class";
 
     static void writeToFile(String data, String filename, Context context) {
