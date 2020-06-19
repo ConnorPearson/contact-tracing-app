@@ -6,16 +6,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.DataOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.UUID;
 
 import static com.example.contacttracingapp.serverComm.postData;
@@ -61,6 +57,11 @@ public class ReportSymptoms extends AppCompatActivity {
 
         //Send uuids of previously close proximity devices
         postData("http://192.168.0.90:3000/receiveProximityUuids", proximityUUIDs.toString());
+
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("newStatus", "RED");
+        setResult(2,returnIntent);
+        finish();
     }
 
     private JSONObject createSymptomsJson() {
