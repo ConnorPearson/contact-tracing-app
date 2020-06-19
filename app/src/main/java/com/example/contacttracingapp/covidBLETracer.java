@@ -21,7 +21,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -29,13 +28,6 @@ import androidx.core.app.NotificationCompat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +35,8 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static com.example.contacttracingapp.serverComm.postData;
 
 public class covidBLETracer extends Service {
     private static final String TAG = "bluetooth";
@@ -137,12 +131,10 @@ public class covidBLETracer extends Service {
                     userUUIDJson.put("uuid", userUUID);
 
                     //Get most recent status from server for current device
-                    userStatus = serverComms.postData("http://192.168.0.90:3000/getStatus", userUUIDJson);
+                    userStatus = postData("http://192.168.0.90:3000/getStatus", userUUIDJson.toString());
 
 
                     userData = new JSONObject(fileReadWrite.loadFromFile(getApplicationContext(), "userData.json"));
-
-                    System.out.println(userData.get("status") + " " + userStatus);
 
                     //If status received is different from file, write new status to file
                     if(!userData.get("status").equals(userStatus)) {
@@ -229,13 +221,13 @@ public class covidBLETracer extends Service {
                         }
                     }
 
-                } catch (JSONException e) {
+                } catch (JSONException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        private void writeUuidsToFile(UUID uuid) throws JSONException {
+        private void writeUuidsToFile(UUID uuid) throws JSONException, InterruptedException {
             //Read in proximity UUIDs file
             try {
                 closeProximityUUIDs = new JSONObject(fileReadWrite.loadFromFile(getApplicationContext(), "proximityUuids.json"));
@@ -253,9 +245,12 @@ public class covidBLETracer extends Service {
                 Log.i(TAG, "Adding UUID to file : " + uuid);
 
                 //If user status equals red post any new proximity uuid
-                if (userStatus.equals("RED"))
-                    postData("http://192.168.0.90:3000/receiveProximityUuids", closeProximityUUIDs.keys().toString());
+                if (userStatus.equals("RED")) {   //POST the keys to server for status change
+                    JSONObject jsonUuid = new JSONObject();
+                    jsonUuid.put(uuid.toString(), "");
 
+                    postData("http://192.168.0.90:3000/receiveProximityUuids", jsonUuid.toString());
+                }
             }
         }
 
@@ -272,48 +267,5 @@ public class covidBLETracer extends Service {
             super.onScanFailed(errorCode);
         }
     };
-
-    public void postData(final String urlData, final String data)  {
-        final boolean[] connectionSuccess = new boolean[1];
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL url = new URL(urlData);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-                    connection.setRequestMethod("POST");
-                    connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-                    connection.setRequestProperty("Accept","application/json");
-                    connection.setDoOutput(true);
-                    connection.setDoInput(true);
-
-                    DataOutputStream os = new DataOutputStream(connection.getOutputStream());
-
-                    os.writeBytes(data);
-
-                    os.flush();
-                    os.close();
-
-                    if(connection.getResponseCode() == 200) {
-                        connectionSuccess[0] = true;
-                    }
-                    else {
-                        connectionSuccess[0] = false;
-                        throw new Exception();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        thread.start();
-
-        if (!connectionSuccess[0]){
-            Toast.makeText(this, "Connection error occurred! Please make sure you have an active internet connection, then try again.", Toast.LENGTH_LONG).show();
-        }
-    }
 }
 

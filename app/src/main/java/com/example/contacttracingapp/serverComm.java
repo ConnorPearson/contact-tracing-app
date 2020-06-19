@@ -1,10 +1,5 @@
 package com.example.contacttracingapp;
 
-import android.content.Context;
-import android.widget.Toast;
-
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,8 +7,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class serverComms {
-    static String postData(final String URL, final JSONObject write) throws InterruptedException {
+public class serverComm {
+    static String postData(final String URL, final String write) throws InterruptedException {
         final Boolean[] connectionSuccess = new Boolean[1];
         final String[] read = new String[1];
 
@@ -33,7 +28,7 @@ public class serverComms {
 
                     DataOutputStream os = new DataOutputStream(connection.getOutputStream());
 
-                    os.writeBytes(write.toString());
+                    os.writeBytes(write);
 
                     os.flush();
                     os.close();
@@ -52,6 +47,7 @@ public class serverComms {
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                    connectionSuccess[0] = false;
                 }
             }
         });

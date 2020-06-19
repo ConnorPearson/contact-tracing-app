@@ -47,7 +47,7 @@ app.post("/receiveProximityUuids", jsonParser, async(req, res) =>{
                 if (uuidsFromFile[receviedKeys[i]] == null) {
                         //Write UUID to JSON with date of exposure
                         uuidsFromFile[receviedKeys[i]] = new Date();
-                        console.log("Adding exposed UUID" + receviedKeys[i] + " " + Date());
+                        console.log("Adding exposed UUID " + receviedKeys[i] + " " + Date());
                 }
         }
 
