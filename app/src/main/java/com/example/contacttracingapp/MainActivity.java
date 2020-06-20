@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             bitMatrix = new MultiFormatWriter().encode(
                     Value,
                     BarcodeFormat.QR_CODE,
-                    120, 120, null
+                    130, 130, null
             );
         } catch (IllegalArgumentException Illegalargumentexception) {
             return null;
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Bitmap bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444);
-        bitmap.setPixels(pixels, 0, 120, 0, 0, bitMatrixWidth, bitMatrixHeight);
+        bitmap.setPixels(pixels, 0, 130, 0, 0, bitMatrixWidth, bitMatrixHeight);
 
         return bitmap;
     }

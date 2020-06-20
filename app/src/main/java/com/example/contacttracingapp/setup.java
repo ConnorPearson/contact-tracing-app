@@ -1,9 +1,9 @@
 package com.example.contacttracingapp;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,10 +23,7 @@ import java.util.UUID;
 
 public class setup extends AppCompatActivity {
 
-    private static final int LOCATION_PERMISSION = 42;
-    private static final int BLUETOOTH_PERMISSION = 43;
-    private static final int BLUETOOTH_ADMIN_PERMISSION = 44;
-    private static final int FINE_LOCATION_PERMISSION = 11;
+    private static final int ALL_PERMISSIONS = 42;
 
      public void agreementBtnCheck(View view) {
          if (((CheckBox)view).isChecked()) {
@@ -38,10 +34,16 @@ public class setup extends AppCompatActivity {
          }
      }
 
-    public void checkPermissions(String permission, int requestCode) {
-        if (ContextCompat.checkSelfPermission(setup.this, permission) == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(setup.this, new String[] { permission }, requestCode);
-        }
+    public void checkPermissions(int requestCode) {
+         String[] permissions = new String[] {
+                 Manifest.permission.BLUETOOTH,
+                 Manifest.permission.BLUETOOTH_ADMIN,
+                 Manifest.permission.ACCESS_FINE_LOCATION,
+                 Manifest.permission.ACCESS_COARSE_LOCATION,
+                 Manifest.permission.RECEIVE_BOOT_COMPLETED};
+
+
+         ActivityCompat.requestPermissions(setup.this, permissions, requestCode);
     }
 
      private JSONObject createUserDataJson() {
@@ -110,10 +112,8 @@ public class setup extends AppCompatActivity {
 
         //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 11);
 
-        checkPermissions("android.permission.ACCESS_FINE_LOCATION", FINE_LOCATION_PERMISSION);
-        checkPermissions("android.permission.ACCESS_COARSE_LOCATION", LOCATION_PERMISSION);
-        checkPermissions("android.permission.BLUETOOTH", BLUETOOTH_PERMISSION);
-        checkPermissions("android.permission.BLUETOOTH_ADMIN", BLUETOOTH_ADMIN_PERMISSION);
+        checkPermissions(ALL_PERMISSIONS);
+
 
         if (BluetoothAdapter.getDefaultAdapter().isEnabled()) {
             if (!BluetoothAdapter.getDefaultAdapter().isMultipleAdvertisementSupported()) {

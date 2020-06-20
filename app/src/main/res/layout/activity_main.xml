@@ -33,9 +33,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:paddingRight="5dp">
 
                 <TextView
                     android:id="@+id/nameTxtView"
@@ -64,9 +65,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
 
                 <TextView
                     android:id="@+id/addressTxtView"
@@ -93,9 +94,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
 
                 <TextView
                     android:id="@+id/passportNumTxtView"
@@ -118,33 +119,43 @@
                     android:textSize="18sp" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/statusTxtView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="8dp"
-                android:text="@string/statusTxtView"
-                android:textAlignment="center"
-                android:textColor="@android:color/primary_text_dark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:paddingLeft="5dp"
+                android:paddingTop="10dp"
+                android:paddingRight="5dp">
 
-            <TextView
-                android:id="@+id/statusValueTxt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/statusValueTxt"
-                android:textAlignment="center"
-                android:textColor="@color/statusGreen"
-                android:textSize="30sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/statusTxtView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/statusTxtView"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/primary_text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/statusValueTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/statusValueTxt"
+                    android:textAlignment="center"
+                    android:textColor="@color/statusGreen"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp">
 
                 <ImageView
                     android:id="@+id/QRCodeImg"
@@ -185,7 +196,7 @@
             android:text="@string/covidUpdatesBtnText"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textStyle="normal"
             android:theme="@android:style/Widget.Holo.Button.Borderless" />
 
@@ -202,7 +213,7 @@
             android:text="@string/reportSymptomsBtnTxt"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textStyle="normal"
             android:theme="@android:style/Widget.Holo.Button.Borderless" />
 
@@ -217,7 +228,7 @@
             android:text="@string/statusDescriptionBtnText"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textStyle="normal"
             android:theme="@android:style/Widget.Holo.Button.Borderless" />
     </LinearLayout>
