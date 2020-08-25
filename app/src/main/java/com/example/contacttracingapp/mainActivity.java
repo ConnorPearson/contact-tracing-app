@@ -38,7 +38,7 @@ import java.util.Objects;
  * @since 2020-05-18
  */
 
-public class MainActivity extends AppCompatActivity {
+public class mainActivity extends AppCompatActivity {
     private static final String TAG = "Main Activity";
     private static JSONObject userData = new JSONObject();
 
@@ -50,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
         applyStatus(getStatus());
     }
 
+    /**
+     * Check if its the user has set up their info, if not then bring up the setup page. Load the
+     * user data in for setting activity attributes.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Set the status attribute of the activity to the status read from the file.
+     */
     @Override
     protected  void onStart() {
         super.onStart();
@@ -82,6 +89,13 @@ public class MainActivity extends AppCompatActivity {
         applyStatus(getStatus());
     }
 
+    /**
+     * If the intent returns from setup then use returned data to set the activities personal
+     * information instead of reading from file.
+     * <p>
+     * If the intent returns from report symptoms activity then update status and disable the report
+     * symptoms buttons.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -108,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Load status from file and return the current value
+     */
     private String getStatus() {
         String status;
         JSONObject userDataJson;
@@ -124,17 +141,29 @@ public class MainActivity extends AppCompatActivity {
         return status;
     }
 
+
+    /**
+     * Start new intent for status description activity
+     */
     public void openStatusDescription(View view) {
         Intent intent = new Intent(this, statusDescription.class);
         startActivity(intent);
     }
 
+    /**
+     * Open government guideline page for covid in new intent. This method will use the users
+     * default browser.
+     */
     public void openCovidWebPage(View view) {
         Uri govUrl = Uri.parse("https://www.gov.uk/coronavirus");
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, govUrl);
         startActivity(launchBrowser);
     }
 
+    /**
+     * Start new intent for report symptoms activity, pass UUID into activity for sending in the
+     * POST request
+     */
     public void openReportSymptoms(View view) {
         Intent intent = new Intent(this, reportSymptoms.class);
         try {
@@ -147,6 +176,9 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, 2);
     }
 
+    /**
+     * Set activity attributes to userData JSON properties and generate UUID QR code bitmap.
+     */
     @SuppressLint("SetTextI18n")
     private void setupPageAttributes() {
         ImageView QRCodeImg  = findViewById(R.id.QRCodeImg);
@@ -160,18 +192,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            Bitmap bitmap = TextToImageEncode(userData.toString());
+            Bitmap bitmap = textToImageEncode(userData.toString());
             QRCodeImg.setImageBitmap(bitmap);
         } catch (Exception e) {
             Log.e(TAG, "setupPageAttributes: ", e);
         }
     }
 
-    private Bitmap TextToImageEncode(String Value) throws WriterException {
+    /**
+     * Encodes given String value to QR code
+     */
+    private Bitmap textToImageEncode(String value) throws WriterException {
         BitMatrix bitMatrix;
         try {
             bitMatrix = new MultiFormatWriter().encode(
-                    Value,
+                    value,
                     BarcodeFormat.QR_CODE,
                     130, 130, null
             );
@@ -198,6 +233,9 @@ public class MainActivity extends AppCompatActivity {
         return bitmap;
     }
 
+    /**
+     * Change userdata JSON status to given String color variable.
+     */
     public void changeStatus(String color) {
         OutputStreamWriter writer;
 
@@ -215,6 +253,9 @@ public class MainActivity extends AppCompatActivity {
         applyStatus(color.toUpperCase());
     }
 
+    /**
+     * change activity elements to given status value
+     */
     private void applyStatus(String status){
         int statusColor;
 

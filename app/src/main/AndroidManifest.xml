@@ -35,14 +35,14 @@
         <activity
             android:name=".setup"
             android:configChanges="orientation|keyboardHidden"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".mainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".mainActivity" />
         </activity>
 
         <!--Service start receiver-->
@@ -53,7 +53,7 @@
         </receiver>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".mainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">

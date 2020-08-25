@@ -46,7 +46,10 @@ public class setup extends AppCompatActivity {
          }
      }
 
-    public void checkPermissions(int requestCode) {
+     /**
+      * Stack request permissions for application to function properly
+      */
+     public void checkPermissions(int requestCode) {
          String[] permissions = new String[] {
                  Manifest.permission.BLUETOOTH,
                  Manifest.permission.BLUETOOTH_ADMIN,
@@ -54,10 +57,13 @@ public class setup extends AppCompatActivity {
                  Manifest.permission.ACCESS_COARSE_LOCATION,
                  Manifest.permission.RECEIVE_BOOT_COMPLETED};
 
-
          ActivityCompat.requestPermissions(setup.this, permissions, requestCode);
-    }
+     }
 
+    /**
+     * Setup user data JSON structure and populate the JSON properties with given data. Also
+     * generate unique UUID for user.
+     */
      private JSONObject createUserDataJson() {
          JSONObject userData = new JSONObject();
 
@@ -76,6 +82,11 @@ public class setup extends AppCompatActivity {
          return userData;
      }
 
+    /**
+     * This method changes the isSetupComplete boolean to stop setup from showing when application
+     * starts. Pass userdata back to mainActivity and start mainActivity intent. Write user data to
+     * file and start the BLE service.
+     */
      public void closeSetup(View view) {
          Context context = getApplicationContext();
 
@@ -86,7 +97,7 @@ public class setup extends AppCompatActivity {
              resultIntent.putExtra("userdata",  createUserDataJson().toString());
              setResult(RESULT_OK, resultIntent);
 
-             Intent intent = new Intent(this, MainActivity.class);
+             Intent intent = new Intent(this, mainActivity.class);
              startActivity(intent);
 
              //Write user data json to application directory
@@ -109,6 +120,9 @@ public class setup extends AppCompatActivity {
          }
      }
 
+    /**
+     * Checks if the user has entered their details in every field, if not return false else true.
+     */
      private boolean checkFieldsPopulated() {
          return     ((TextView)findViewById(R.id.firstNameTxt)).length() > 0 &
                         ((TextView)findViewById(R.id.surnameTxt)).length() > 0 &
@@ -116,13 +130,16 @@ public class setup extends AppCompatActivity {
                          ((TextView)findViewById(R.id.passportIDTxt)).length() > 0;
      }
 
+
+    /**
+     * Check for required application permissions and check for bluetooth functionality on device,
+     * if not available then inform user.
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-
-        //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 11);
 
         checkPermissions(ALL_PERMISSIONS);
 

@@ -19,6 +19,13 @@ import java.net.URL;
  */
 
 public class serverComm {
+
+    /**
+     * Method requires a String containing a valid URL for the location the data is being sent to
+     * and a String containing the JSON formatted write data.
+     * <p>
+     * Method can throw an IOException, InterruptedException or a MalformedURLException.
+     */
     static String postData(final String URL, final String write) throws InterruptedException {
         final Boolean[] connectionSuccess = new Boolean[1];
         final String[] read = new String[1];
@@ -63,6 +70,7 @@ public class serverComm {
             }
         });
 
+        //Begin thread then once complete execute if connectionSuccess check.
         thread.start();
         thread.join();
 

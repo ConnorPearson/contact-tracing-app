@@ -26,6 +26,9 @@ import java.io.OutputStreamWriter;
 public class fileReadWrite {
     private static final String TAG = "fileReadWrite  class";
 
+    /**
+     * Writes given variable data to file at filename in androids storage.
+     */
     static void writeToFile(String data, String filename, Context context) {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(new File(context.getFilesDir() + "/" + filename));
@@ -38,6 +41,9 @@ public class fileReadWrite {
         }
     }
 
+    /**
+     * Loads data from given filename.
+     */
     static String loadFromFile(Context context, String filename) {
         String userData = null;
 

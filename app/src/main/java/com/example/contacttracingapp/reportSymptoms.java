@@ -42,6 +42,10 @@ public class reportSymptoms extends AppCompatActivity {
         uuid = UUID.fromString(extras.getString("uuid"));
     }
 
+    /**
+     * Allows the submit button to change enabled status depending on if the user has selected a
+     * symptom checkbox.
+     */
     public void logCheckedElement(View view) {
         if (((CheckBox) view).isChecked())
             checkedElements++;
@@ -54,6 +58,12 @@ public class reportSymptoms extends AppCompatActivity {
             findViewById(R.id.submitSymptomsBtn).setEnabled(false);
     }
 
+
+    /**
+     * Posts the users symptom data and UUID to the node server for logging. Method then closes
+     * current intent and returns to mainActivity with intent data telling the mainActivity class
+     * to change status to 'RED'.
+     */
     public void submitSymptoms(View view) throws InterruptedException {
         JSONObject proximityUUIDs = new JSONObject();
 
@@ -76,6 +86,11 @@ public class reportSymptoms extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Create JSON of checked symptom data provided upon submission. This also includes the
+     * additional data provided in the text box element. Parsing the JSON can produce a
+     * JSONException if the formatting is malformed.
+     */
     private JSONObject createSymptomsJson() {
         JSONObject symptoms = new JSONObject();
 
@@ -91,7 +106,7 @@ public class reportSymptoms extends AppCompatActivity {
             symptoms.put("headaches", ((CheckBox) findViewById(R.id.headachesCheckBox)).isChecked());
             symptoms.put("chillsAndShaking", ((CheckBox) findViewById(R.id.chillsCheckBox)).isChecked());
             symptoms.put("additional", ((TextView) findViewById(R.id.additionalTextBox)).getText());
-        } catch (Exception e) {
+        } catch (JSONException e) {
             Log.e("JSON Symptom Parse", e.toString());
         }
 

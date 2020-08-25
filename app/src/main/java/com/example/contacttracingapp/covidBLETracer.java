@@ -71,6 +71,11 @@ public class covidBLETracer extends Service {
         return null;
     }
 
+    /**
+     *  Method sets up the services properties such as its visibility and icon, then starts the
+     *  notification. The users UUID is then loaded into the UUID variable for the service
+     *  to broadcast.
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void onCreate() {
         //Construct the service notification required for background services in newer android api's
@@ -105,6 +110,14 @@ public class covidBLETracer extends Service {
         }
     }
 
+    /**
+     * This method calls the service function to start scanning for local devices, then broadcasts
+     * (advertises) the users UUID. The method then checks the current devices status with the node
+     * server. This method is repeated every set number of seconds.
+     *
+     * onStartCommand runs as a part of the service standard whn the service is called. This runs
+     * after the onCreate method so any prerequisites are already setup in onCreate.
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startLeScan();
@@ -115,6 +128,8 @@ public class covidBLETracer extends Service {
         return START_STICKY;
     }
 
+
+    //Kills any ongoing scans when service is destroyed
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -122,6 +137,10 @@ public class covidBLETracer extends Service {
         mBluetoothLeScanner.stopScan(mScanCallback);
     }
 
+    /**
+     * Sets up scan properties such as scan power and begins scanning with predefined filters
+     * ArrayList.
+     */
     public void startLeScan() {
         //Setup scan settings, mode set to Low Power for battery decreased use
         ScanSettings settings = new ScanSettings.Builder()
@@ -131,6 +150,13 @@ public class covidBLETracer extends Service {
         mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
     }
 
+    /**
+     *Posts current user UUID to node server on seperate thread to prevent stopping / slowing of the
+     * UI thread. The node server should respond with the users current exposure status. If the
+     * users status has change it will be updated to file.
+     * <p>
+     * The method will run this thread every 20 seconds
+     */
     private void checkStatus() {
         Runnable runnable = new Runnable() {
             @Override
@@ -165,6 +191,11 @@ public class covidBLETracer extends Service {
         executor.scheduleAtFixedRate(runnable, 0, 20, TimeUnit.SECONDS);
     }
 
+    /**
+     * Method sets up advertising callback, adds the users UUID to a parcel data type then adds the
+     * parcel data type to the advert for broadcasting. The method then finally calls the
+     * startAdvertising method with the needed settings, data and created callback.
+     */
     public void startLeAdvert() {
         AdvertiseCallback advertisingCallback = new AdvertiseCallback() {
             @Override
@@ -192,7 +223,12 @@ public class covidBLETracer extends Service {
         advertiser.startAdvertising(settings, data, advertisingCallback);
     }
 
+    /**
+     * scan callback method handles multiple outcomes of the BLE scan.
+     */
     private ScanCallback mScanCallback = new ScanCallback() {
+        JSONObject potentialProximityUuids = new JSONObject();
+
         //Truncates data to derive UUID, no built in function for get UUID so this was the solution
         private UUID trimUUID(String data) {
             try {
@@ -203,6 +239,12 @@ public class covidBLETracer extends Service {
             }
         }
 
+        /**
+         * Checks the signal quality of the a result, if the signal is strong then trim the UUID and
+         * check if it is null as any other broadcasting devices can be picked up in the scan but
+         * wil not have the UUID parcel. If the UUID is new log it with a time stamp for expiration
+         * checking.
+         */
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
@@ -238,6 +280,11 @@ public class covidBLETracer extends Service {
             }
         }
 
+        /**
+         * Loads in close proximity UUIDs and adds the new UUID to the JSON unless the UUID is
+         * already in the file. If current devices user is exposure status 'RED' then post JSON of
+         * close proximity UUIDs to node server as well.
+         */
         private void writeUuidsToFile(UUID uuid) throws JSONException, InterruptedException {
             //Read in proximity UUIDs file
             try {
@@ -265,13 +312,12 @@ public class covidBLETracer extends Service {
             }
         }
 
-        JSONObject potentialProximityUuids = new JSONObject();
-
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
             super.onBatchScanResults(results);
         }
 
+        //If scan results in an error then log error to logcat.
         @Override
         public void onScanFailed(int errorCode) {
             Log.e("BLE", "Discovery onScanFailed: " + errorCode);
