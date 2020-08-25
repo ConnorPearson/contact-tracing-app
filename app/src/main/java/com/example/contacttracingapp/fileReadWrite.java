@@ -12,6 +12,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+/**
+ * <h1>fileReadWrite.java</h1>
+ * This class is used to write to and read from the android devices internal storage.
+ * <p>
+ * The class is used in multiple other classes in the application and therefore was given its own
+ * class to prevent repeated code.
+ *
+ * @author  Connor Pearson
+ * @since 2020-05-18
+ */
+
 public class fileReadWrite {
     private static final String TAG = "fileReadWrite  class";
 

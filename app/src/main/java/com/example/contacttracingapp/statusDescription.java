@@ -23,7 +23,18 @@ import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
-public class StatusDescription extends AppCompatActivity {
+/**
+ * <h1>statusDescription.java</h1>
+ * This class displays a static activity showing the simple meaning behind the colours that
+ * represent the users exposure status.
+ * <p>
+ * The user should only really need visit this page once.
+ *
+ * @author  Connor Pearson
+ * @since 2020-05-18
+ */
+
+public class statusDescription extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

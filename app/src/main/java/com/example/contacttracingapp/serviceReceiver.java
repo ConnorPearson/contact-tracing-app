@@ -6,6 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+/**
+ * <h1>serviceReceiver.java.java</h1>
+ * This class starts the covidBLETracer service if the device matches the compatible Android
+ * version.
+ * <p>
+ * This class is most commonly called on boot of the user device when the service starts.
+ *
+ * @author  Connor Pearson
+ * @since 2020-05-18
+ */
+
 public class serviceReceiver extends BroadcastReceiver{
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")

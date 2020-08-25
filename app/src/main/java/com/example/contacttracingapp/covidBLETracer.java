@@ -38,6 +38,17 @@ import java.util.concurrent.TimeUnit;
 
 import static com.example.contacttracingapp.serverComm.postData;
 
+/**
+ * <h1>covidBLETracer.java</h1>
+ * This class is ran as a service in Android, it broadcasts the users unique UUID and also scans for
+ * local devices doing the same ans logs the UUIDs from local devices.
+ * <p>
+ * This class will auto-start as a service on boot and will start just after setup is complete also.
+ *
+ * @author  Connor Pearson
+ * @since 2020-05-18
+ */
+
 public class covidBLETracer extends Service {
     private static final String TAG = "bluetooth";
 

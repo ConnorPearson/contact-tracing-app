@@ -26,6 +26,18 @@ import org.json.JSONObject;
 import java.io.OutputStreamWriter;
 import java.util.Objects;
 
+/**
+ * <h1>MainActivity.java</h1>
+ * This class controls which activity the user is greeted with upon application launch. The class
+ * also creates the appropriate files needed for initial setup, updates exposure state and
+ * handles button actions on activity.
+ * <p>
+ * The user will spend the majority of their time using the application on this activity class.
+ *
+ * @author  Connor Pearson
+ * @since 2020-05-18
+ */
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Main Activity";
     private static JSONObject userData = new JSONObject();
@@ -113,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openStatusDescription(View view) {
-        Intent intent = new Intent(this, StatusDescription.class);
+        Intent intent = new Intent(this, statusDescription.class);
         startActivity(intent);
     }
 
@@ -124,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openReportSymptoms(View view) {
-        Intent intent = new Intent(this, ReportSymptoms.class);
+        Intent intent = new Intent(this, reportSymptoms.class);
         try {
             //Pass uuid into symptoms report for posting
             intent.putExtra("uuid", userData.get("uuid").toString());

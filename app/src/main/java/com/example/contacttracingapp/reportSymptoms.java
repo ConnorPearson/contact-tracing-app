@@ -16,7 +16,19 @@ import java.util.UUID;
 
 import static com.example.contacttracingapp.serverComm.postData;
 
-public class ReportSymptoms extends AppCompatActivity {
+/**
+ * <h1>reportSymptoms.java</h1>
+ * This class receives and validates user input symptoms. Once the data has been validates the data
+ * is posted to a node server and is compiled into usable statistical data for anonymised research.
+ * <p>
+ * The user should only really visit this page once. This is when they are showing symptoms and
+ * believe they have the virus.
+ *
+ * @author  Connor Pearson
+ * @since 2020-05-18
+ */
+
+public class reportSymptoms extends AppCompatActivity {
     private int checkedElements = 0;
     private UUID uuid;
 

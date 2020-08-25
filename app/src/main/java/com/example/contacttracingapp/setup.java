@@ -20,6 +20,18 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
+/**
+ * <h1>setup.java</h1>
+ * This class displays the setup activity in the application so that the user can enter their
+ * personal information. Th class then saves this information to a JSON stored in the devices
+ * storage.
+ * <p>
+ * The user should only visit this page once when the application if initially installed or again if
+ * the app is reset or deleted and reinstalled of course.
+ *
+ * @author  Connor Pearson
+ * @since 2020-05-18
+ */
 
 public class setup extends AppCompatActivity {
 

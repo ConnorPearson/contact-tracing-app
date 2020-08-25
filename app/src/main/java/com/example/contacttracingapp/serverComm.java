@@ -7,6 +7,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * <h1>serverComm.java</h1>
+ * This class is used to post data to a remote server.
+ * <p>
+ * This class is used across multiple classes and was therefore given its own class to prevent
+ * repeating code.
+ *
+ * @author  Connor Pearson
+ * @since 2020-05-18
+ */
+
 public class serverComm {
     static String postData(final String URL, final String write) throws InterruptedException {
         final Boolean[] connectionSuccess = new Boolean[1];
